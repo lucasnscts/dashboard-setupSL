@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Interativo - Produção de Slitter</title>
+    <title>Dashboard - Setup de Slitter</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -17,12 +17,14 @@
     
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
-        #loading-screen { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        /* O ecrã de loading */
+        #loading-screen { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.5s ease; }
         .spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="text-slate-800 antialiased overflow-x-hidden">
+    
     <!-- Ecrã de Carregamento -->
     <div id="loading-screen">
         <div class="spinner mb-4"></div>
@@ -30,19 +32,20 @@
         <p class="text-sm text-slate-300 mt-2">A processar o ficheiro BD_setup_SL.xlsx</p>
     </div>
 
+    <!-- Painel Oculto por defeito -->
     <div class="min-h-screen flex flex-col hidden" id="main-content">
         <!-- Cabeçalho -->
         <header class="bg-slate-900 text-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold flex items-center gap-3">
-                        <i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard de Análise de Setup - Slitter
+                        <i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup de Slitter
                     </h1>
                     <p class="text-slate-400 text-sm mt-1" id="header-subtitle">A processar dados...</p>
                 </div>
                 <div class="mt-4 md:mt-0 flex items-center gap-3">
-                    <span class="bg-emerald-600/30 text-emerald-300 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/30">
-                        <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Sincronizado c/ GitHub
+                    <span id="badge-sync" class="bg-emerald-600/30 text-emerald-300 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/30">
+                        <i class="fa-solid fa-clock mr-1"></i> A verificar atualização...
                     </span>
                 </div>
             </div>
@@ -209,7 +212,7 @@
         </main>
 
         <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
-            <p>Dashboard Dinâmico Integrado c/ GitHub Pages | © Setor de Produção & Melhoria Contínua</p>
+            <p>Dashboard de Acompanhamento de Setup das Slitters | © Estabilização de Processos Área 02</p>
         </footer>
     </div>
 
@@ -232,27 +235,51 @@
         // Função Principal de Leitura do Excel via Fetch
         async function fetchExcelFromGitHub() {
             try {
-                const response = await fetch('BD_setup_SL.xlsx', { cache: 'no-store' });
+                // Adicionamos ?t= ao final para forçar o navegador a não usar cache do ficheiro excel
+                const url = 'BD_setup_SL.xlsx?t=' + new Date().getTime();
+                const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) throw new Error("Ficheiro não encontrado.");
                 
+                // Tratar a Data da Última Atualização
+                let lastMod = response.headers.get('Last-Modified');
+                let dataHoraAtualizacao;
+                if (lastMod) {
+                    const d = new Date(lastMod);
+                    dataHoraAtualizacao = d.toLocaleDateString('pt-PT') + ' às ' + d.toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit'});
+                } else {
+                    const d = new Date();
+                    dataHoraAtualizacao = d.toLocaleDateString('pt-PT') + ' às ' + d.toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit'});
+                }
+                document.getElementById('badge-sync').innerHTML = `<i class="fa-solid fa-clock mr-1"></i> Atualizado em: ${dataHoraAtualizacao}`;
+
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const json = XLSX.utils.sheet_to_json(worksheet);
 
                 processExcelData(json);
-
-                document.getElementById('loading-screen').style.display = 'none';
+                
+                // Mostrar o painel principal
                 document.getElementById('main-content').classList.remove('hidden');
+                
+                // DESTRUIR O ECRÃ DE LOADING DEFINITIVAMENTE DO CÓDIGO
+                const loader = document.getElementById('loading-screen');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.remove(), 500); // Apaga a div do HTML
+                }
 
                 initCharts();
                 updateDashboard();
 
             } catch (error) {
                 console.error(error);
-                document.getElementById('loading-text').innerText = "Erro ao carregar ficheiro!";
-                document.getElementById('loading-text').classList.add("text-red-400");
-                document.querySelector('#loading-screen p').innerText = "Certifique-se de que o ficheiro 'BD_setup_SL.xlsx' existe na mesma pasta do repositório no GitHub.";
+                const loadText = document.getElementById('loading-text');
+                if(loadText) {
+                    loadText.innerText = "Erro ao carregar ficheiro!";
+                    loadText.classList.add("text-red-400");
+                    document.querySelector('#loading-screen p').innerText = "Verifique se o ficheiro BD_setup_SL.xlsx existe no GitHub.";
+                }
             }
         }
 
@@ -315,7 +342,7 @@
 
         window.onload = fetchExcelFromGitHub;
 
-        // Configuração Comum de Labels Padrão
+        // Configuração dos Rótulos de Dados (DataLabels Plugin)
         const dataLabelsConfig = {
             color: '#475569',
             font: { weight: '600', size: 10 },
@@ -328,7 +355,9 @@
 
         function initCharts() {
             // Regista o plugin globalmente
-            Chart.register(ChartDataLabels);
+            if(typeof ChartDataLabels !== 'undefined') {
+                Chart.register(ChartDataLabels);
+            }
 
             const ctxLine = document.getElementById('lineChart').getContext('2d');
             lineChart = new Chart(ctxLine, {
