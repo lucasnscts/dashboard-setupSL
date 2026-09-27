@@ -133,21 +133,21 @@
                         <h3 class="font-bold text-lg text-slate-800">Evolução do Tempo Médio (Minutos)</h3>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Base Histórica</span>
                     </div>
-                    <div class="relative flex-grow h-72">
+                    <div class="relative flex-grow h-[280px]">
                         <canvas id="lineChart"></canvas>
                     </div>
                 </div>
-                <!-- Gráfico de Barras & Média Mensal de Setups -->
+                <!-- Gráfico de Barras & Comparativo Mensal de Setups -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-lg text-slate-800">Comparativo de Médias Anuais</h3>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Por Máquina</span>
                     </div>
-                    <div class="relative flex-grow h-72">
+                    <div class="relative flex-grow h-[280px]">
                         <canvas id="barChart"></canvas>
                     </div>
                     <div class="mt-4 pt-4 border-t border-slate-100">
-                        <p class="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider"><i class="fa-solid fa-layer-group text-blue-400 mr-1"></i> Média Mensal de Setups (Geral)</p>
+                        <p class="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider"><i class="fa-solid fa-code-compare text-blue-400 mr-1"></i> Comparativo de Média Mensal de Setups</p>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="monthly-setups-grid">
                             <!-- Gerado dinamicamente via JS -->
                         </div>
@@ -234,15 +234,12 @@
         let currentYear, prevYear;
         let lineChart, barChart, volumeChart;
 
-        // Função Principal de Leitura do Excel via Fetch
         async function fetchExcelFromGitHub() {
             try {
-                // Adicionamos ?t= ao final para forçar o navegador a não usar cache do ficheiro excel
                 const url = 'BD_setup_SL.xlsx?t=' + new Date().getTime();
                 const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) throw new Error("Ficheiro não encontrado.");
                 
-                // Tratar a Data da Última Atualização
                 let lastMod = response.headers.get('Last-Modified');
                 let dataHoraAtualizacao;
                 if (lastMod) {
@@ -261,14 +258,12 @@
 
                 processExcelData(json);
                 
-                // Mostrar o painel principal
                 document.getElementById('main-content').classList.remove('hidden');
                 
-                // DESTRUIR O ECRÃ DE LOADING DEFINITIVAMENTE DO CÓDIGO
                 const loader = document.getElementById('loading-screen');
                 if (loader) {
                     loader.style.opacity = '0';
-                    setTimeout(() => loader.remove(), 500); // Apaga a div do HTML
+                    setTimeout(() => loader.remove(), 500);
                 }
 
                 initCharts();
@@ -344,7 +339,6 @@
 
         window.onload = fetchExcelFromGitHub;
 
-        // Configuração dos Rótulos de Dados (DataLabels Plugin)
         const dataLabelsConfig = {
             color: '#475569',
             font: { weight: '600', size: 10 },
@@ -356,7 +350,6 @@
         };
 
         function initCharts() {
-            // Regista o plugin globalmente
             if(typeof ChartDataLabels !== 'undefined') {
                 Chart.register(ChartDataLabels);
             }
@@ -446,11 +439,13 @@
                 (sinVal === 'all' || d.sintomaId == sinVal)
             );
 
-            // Cálculos KPIs e Destaques
+            // Contar quantos meses únicos de dados temos para cada ano para calcular a média mensal
+            const monthsPrevYear = months.filter(m => m.endsWith(String(prevYear).slice(2))).length || 1;
+            const monthsCurrYear = months.filter(m => m.endsWith(String(currentYear).slice(2))).length || 1;
+
             let tPrev = 0, cPrev = 0, tCurr = 0, cCurr = 0;
             let machineStats = [];
             let setupAvgHTML = '';
-            const totalMonthsFilter = months.length || 1;
 
             [1, 2, 3, 4].forEach(maq => {
                 const mPrev = filtered.filter(d => d.maqId === maq && d.ano === prevYear);
@@ -473,14 +468,38 @@
                     diff: (avgP > 0 && avgC > 0) ? (avgP - avgC) : -9999
                 });
 
-                // Lógica da Média Mensal de Setups
-                const totalSetupsMaq = scP + scC;
-                const avgSetupsMonth = (totalSetupsMaq / totalMonthsFilter).toFixed(1);
+                // NOVO: Card Comparativo de Setups Mensais Lado a Lado
+                const avgPrevMonth = (scP / monthsPrevYear).toFixed(1);
+                const avgCurrMonth = (scC / monthsCurrYear).toFixed(1);
+                
+                let trendIcon = '<i class="fa-solid fa-minus"></i>';
+                let trendColor = 'text-slate-300';
+                if (parseFloat(avgCurrMonth) > parseFloat(avgPrevMonth)) {
+                    trendIcon = '<i class="fa-solid fa-arrow-trend-up"></i>';
+                    trendColor = 'text-blue-500'; 
+                } else if (parseFloat(avgCurrMonth) < parseFloat(avgPrevMonth)) {
+                    trendIcon = '<i class="fa-solid fa-arrow-trend-down"></i>';
+                    trendColor = 'text-amber-500';
+                }
+
                 const opacityClass = (maqVal !== 'all' && parseInt(maqVal) !== maq) ? 'opacity-30' : '';
+                
                 setupAvgHTML += `
-                    <div class="bg-slate-50 p-2 rounded border border-slate-100 text-center ${opacityClass}">
-                        <p class="text-[10px] text-slate-500 font-semibold uppercase">${maqNames[maq]}</p>
-                        <p class="text-sm font-bold text-slate-800">${avgSetupsMonth} <span class="text-[10px] font-normal text-slate-500">/mês</span></p>
+                    <div class="bg-slate-50 p-2 rounded border border-slate-200 text-center shadow-sm ${opacityClass}">
+                        <p class="text-[10px] text-slate-600 font-bold uppercase border-b border-slate-200 pb-1 mb-1">${maqNames[maq]}</p>
+                        <div class="flex justify-between items-center px-1">
+                            <div class="text-center">
+                                <p class="text-[9px] text-slate-400 leading-tight">${prevYear}</p>
+                                <p class="text-sm font-bold text-slate-600">${avgPrevMonth}</p>
+                            </div>
+                            <div class="${trendColor} text-[10px] px-1">
+                                ${trendIcon}
+                            </div>
+                            <div class="text-center">
+                                <p class="text-[9px] text-slate-400 leading-tight">${currentYear}</p>
+                                <p class="text-sm font-bold text-slate-900">${avgCurrMonth}</p>
+                            </div>
+                        </div>
                     </div>
                 `;
             });
@@ -495,7 +514,6 @@
             document.getElementById('kpi-avg-curr').innerText = avgCurrOverall;
             document.getElementById('kpi-count-curr').innerText = cCurr.toLocaleString();
 
-            // Lógica do Card de Destaques Dinâmicos
             const diffOverall = (cPrev && cCurr) ? ((tPrev/cPrev) - (tCurr/cCurr)) : 0;
             const textDirection = diffOverall > 0 ? "caiu" : "subiu";
             document.getElementById('highlight-overall').innerHTML = `A média geral de tempo ${textDirection} de <strong>${avgPrevOverall} min</strong> em ${prevYear} para <strong>${avgCurrOverall} min</strong> em ${currentYear}.`;
