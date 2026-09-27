@@ -79,10 +79,6 @@
                         </select>
                     </div>
                 </div>
-                <div class="text-xs text-slate-500 flex items-center gap-2">
-                    <i class="fa-solid fa-rotate text-blue-500"></i>
-                    <span>Atualização em tempo real</span>
-                </div>
             </div>
 
             <!-- KPIs -->
@@ -137,18 +133,24 @@
                         <h3 class="font-bold text-lg text-slate-800">Evolução do Tempo Médio (Minutos)</h3>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Base Histórica</span>
                     </div>
-                    <div class="relative flex-grow h-80">
+                    <div class="relative flex-grow h-72">
                         <canvas id="lineChart"></canvas>
                     </div>
                 </div>
-                <!-- Gráfico de Barras -->
+                <!-- Gráfico de Barras & Média Mensal de Setups -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-lg text-slate-800">Comparativo de Médias Anuais</h3>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Por Máquina</span>
                     </div>
-                    <div class="relative flex-grow h-80">
+                    <div class="relative flex-grow h-72">
                         <canvas id="barChart"></canvas>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <p class="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider"><i class="fa-solid fa-layer-group text-blue-400 mr-1"></i> Média Mensal de Setups (Geral)</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="monthly-setups-grid">
+                            <!-- Gerado dinamicamente via JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -447,6 +449,8 @@
             // Cálculos KPIs e Destaques
             let tPrev = 0, cPrev = 0, tCurr = 0, cCurr = 0;
             let machineStats = [];
+            let setupAvgHTML = '';
+            const totalMonthsFilter = months.length || 1;
 
             [1, 2, 3, 4].forEach(maq => {
                 const mPrev = filtered.filter(d => d.maqId === maq && d.ano === prevYear);
@@ -468,7 +472,20 @@
                     volCurr: scC,
                     diff: (avgP > 0 && avgC > 0) ? (avgP - avgC) : -9999
                 });
+
+                // Lógica da Média Mensal de Setups
+                const totalSetupsMaq = scP + scC;
+                const avgSetupsMonth = (totalSetupsMaq / totalMonthsFilter).toFixed(1);
+                const opacityClass = (maqVal !== 'all' && parseInt(maqVal) !== maq) ? 'opacity-30' : '';
+                setupAvgHTML += `
+                    <div class="bg-slate-50 p-2 rounded border border-slate-100 text-center ${opacityClass}">
+                        <p class="text-[10px] text-slate-500 font-semibold uppercase">${maqNames[maq]}</p>
+                        <p class="text-sm font-bold text-slate-800">${avgSetupsMonth} <span class="text-[10px] font-normal text-slate-500">/mês</span></p>
+                    </div>
+                `;
             });
+
+            document.getElementById('monthly-setups-grid').innerHTML = setupAvgHTML;
 
             // Update KPI Cards
             const avgPrevOverall = cPrev ? (tPrev/cPrev).toFixed(2) : '0.00';
