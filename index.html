@@ -516,12 +516,26 @@
                 }
             });
 
+            // Configuração dos rótulos com fundo branco translúcido (Pílula) para Volume e Tempo
+            const stackedLabelsConfig = {
+                color: '#002b5c',
+                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                borderRadius: 3,
+                padding: 2,
+                font: { weight: '700', size: 10 },
+                anchor: 'center',
+                align: 'center'
+            };
+
             const ctxVol = document.getElementById('volumeChart').getContext('2d');
             volumeChart = new Chart(ctxVol, {
                 type: 'bar', data: { labels: activeData.months, datasets: volDatasets },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' }, datalabels: { color: '#002b5c', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center', formatter: function(v) { return (v && v > 0) ? v : ''; } } },
+                    plugins: { 
+                        legend: { position: 'bottom' }, 
+                        datalabels: { ...stackedLabelsConfig, formatter: function(v) { return (v && v > 0) ? v : ''; } } 
+                    },
                     scales: { x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }, y: { stacked: true, grid: { color: '#f1f5f9' } } }
                 }
             });
@@ -531,7 +545,10 @@
                 type: 'bar', data: { labels: activeData.months, datasets: timeDatasets },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' }, datalabels: { color: '#002b5c', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center', formatter: function(v) { return (v && v > 0) ? Math.round(v) : ''; } } },
+                    plugins: { 
+                        legend: { position: 'bottom' }, 
+                        datalabels: { ...stackedLabelsConfig, formatter: function(v) { return (v && v > 0) ? Math.round(v) : ''; } } 
+                    },
                     scales: { x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }, y: { stacked: true, grid: { color: '#f1f5f9' } } }
                 }
             });
