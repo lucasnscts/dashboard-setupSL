@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Setup de Slitter</title>
+    <title>Dashboard - Setup</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -20,6 +20,8 @@
         #loading-screen { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.5s ease; }
         .spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Esconder abas na impressão */
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="text-slate-800 antialiased overflow-x-hidden">
@@ -28,7 +30,7 @@
     <div id="loading-screen">
         <div class="spinner mb-4"></div>
         <h2 class="text-xl font-semibold" id="loading-text">A ler a base de dados no GitHub...</h2>
-        <p class="text-sm text-slate-300 mt-2">A processar o ficheiro BD_setup_SL.xlsx</p>
+        <p class="text-sm text-slate-300 mt-2">A processar o ficheiro BD_setup_SLTR.xlsx</p>
     </div>
 
     <!-- Painel Oculto por defeito -->
@@ -37,13 +39,12 @@
         <header class="bg-slate-900 text-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
                 <div>
-                    <h1 class="text-2xl font-bold flex items-center gap-3">
+                    <h1 class="text-2xl font-bold flex items-center gap-3" id="main-title">
                         <i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup de Slitter
                     </h1>
                     <p class="text-slate-400 text-sm mt-1" id="header-subtitle">A processar dados...</p>
                 </div>
-                <!-- Oculto no PDF (print:hidden) -->
-                <div class="mt-4 md:mt-0 flex items-center gap-3 print:hidden">
+                <div class="mt-4 md:mt-0 flex flex-col items-end gap-3 no-print">
                     <span id="badge-sync" class="bg-emerald-600/30 text-emerald-300 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/30">
                         <i class="fa-solid fa-clock mr-1"></i> A verificar atualização...
                     </span>
@@ -52,30 +53,34 @@
         </header>
 
         <!-- Conteúdo Principal -->
-        <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 space-y-8">
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 space-y-6">
             
-            <!-- Barra de Filtros (Oculto no PDF) -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4 print:hidden">
-                <div class="flex items-center gap-4 flex-wrap">
-                    <div class="flex items-center gap-2">
+            <!-- Navegação de Abas -->
+            <div class="flex justify-center mb-2 no-print">
+                <div class="bg-slate-200 p-1.5 rounded-xl inline-flex shadow-inner gap-1">
+                    <button id="btn-tab-SL" onclick="switchGroup('SL')" class="px-8 py-2.5 rounded-lg font-bold text-sm transition-all bg-white text-slate-800 shadow-sm border border-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-gears text-blue-500"></i> Slitters
+                    </button>
+                    <button id="btn-tab-TR" onclick="switchGroup('TR')" class="px-8 py-2.5 rounded-lg font-bold text-sm transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2 border border-transparent hover:bg-slate-300/50">
+                        <i class="fa-solid fa-arrows-left-right text-emerald-600"></i> Transversais
+                    </button>
+                </div>
+            </div>
+
+            <!-- Barra de Filtros -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4 no-print">
+                <div class="flex items-center gap-4 flex-wrap w-full">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
                         <label for="machineFilter" class="font-semibold text-sm text-slate-600"><i class="fa-solid fa-industry mr-1 text-blue-500"></i> Máquina:</label>
-                        <select id="machineFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
-                            <option value="all">Todas as Máquinas</option>
-                            <option value="1">SLITTER 01</option>
-                            <option value="2">SLITTER 02</option>
-                            <option value="3">SLITTER 03</option>
-                            <option value="4">SLITTER 04</option>
+                        <select id="machineFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full sm:w-auto">
+                            <!-- Gerado dinamicamente -->
                         </select>
                     </div>
 
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
                         <label for="sintomaFilter" class="font-semibold text-sm text-slate-600"><i class="fa-solid fa-screwdriver-wrench mr-1 text-blue-500"></i> Sintoma:</label>
-                        <select id="sintomaFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 max-w-xs">
-                            <option value="all">Todos os Sintomas</option>
-                            <option value="1">TROCA DE PLANO DE CORTE COMPLETO</option>
-                            <option value="2">REGULAGEM PLANO CORTE/EIXOS SEPARADORES</option>
-                            <option value="3">TROCA DE PLANO DE CORTE PARCIAL</option>
-                            <option value="4">TROCA DAS CASTANHAS</option>
+                        <select id="sintomaFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full max-w-md">
+                            <!-- Gerado dinamicamente -->
                         </select>
                     </div>
                 </div>
@@ -148,7 +153,7 @@
                     </div>
                     <div class="mt-4 pt-4 border-t border-slate-100">
                         <p class="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider"><i class="fa-solid fa-code-compare text-blue-400 mr-1"></i> Comparativo de Média Mensal de Setups</p>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="monthly-setups-grid">
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="monthly-setups-grid">
                             <!-- Gerado dinamicamente via JS -->
                         </div>
                     </div>
@@ -189,8 +194,8 @@
                         </ul>
                     </div>
                     
-                    <!-- Botões de Exportação Ocultos na Impressão -->
-                    <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-3 print:hidden">
+                    <!-- Botões de Exportação -->
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-3 no-print">
                         <button onclick="window.print()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-file-pdf"></i> Salvar Painel em PDF
                         </button>
@@ -207,9 +212,9 @@
                     <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-table mr-2 text-blue-500"></i> Resumo de Tempos Médios (Minutos)</h3>
                 </div>
                 <div class="overflow-x-auto">
-                    <table id="resumoTable" class="w-full text-left border-collapse text-sm">
+                    <table id="resumoTable" class="w-full text-left border-collapse text-sm whitespace-nowrap">
                         <thead id="table-head">
-                            <!-- Gerado via JS para suportar expansão futura de anos -->
+                            <!-- Gerado via JS -->
                         </thead>
                         <tbody id="table-body" class="divide-y divide-slate-100"></tbody>
                         <tfoot id="table-foot"></tfoot>
@@ -218,36 +223,29 @@
             </div>
         </main>
 
-        <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500 print:hidden">
-            <p>Dashboard de Acompanhamento de Setup das Slitters | © Estabilização de Processos Área 02</p>
+        <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500 no-print">
+            <p>Dashboard de Acompanhamento de Setup | © Estabilização de Processos Área 02</p>
         </footer>
     </div>
 
     <script>
-        const maqNames = { 1: "SLITTER 01", 2: "SLITTER 02", 3: "SLITTER 03", 4: "SLITTER 04" };
-        const maqMap = { "SLITTER 01": 1, "SLITTER 02": 2, "SLITTER 03": 3, "SLITTER 04": 4 };
-        const sintomaMap = {
-            "TROCA DE PLANO DE CORTE COMPLETO": 1,
-            "REGULAGEM PLANO CORTE/EIXOS SEPARADORES": 2,
-            "TROCA DE PLANO DE CORTE PARCIAL": 3,
-            "TROCA DAS CASTANHAS": 4
-        };
         const ptMonths = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+        const colorsBorder = ['#2563eb', '#d97706', '#16a34a', '#dc2626', '#9333ea'];
+        const colorsBgVol = ['#93c5fd', '#fde68a', '#86efac', '#fca5a5', '#d8b4fe'];
 
-        let rawData = [];
-        let months = [];
-        let currentYear, prevYear;
+        let dataSL = null;
+        let dataTR = null;
+        let activeData = null;
+        
         let lineChart, barChart, volumeChart;
 
-        // --- LÓGICA DE CARREGAMENTO AUTOMÁTICO DO GITHUB ---
         async function fetchExcelFromGitHub() {
             try {
-                // Fetch forçando a ignorar o cache para obter a versão mais recente
-                const url = 'BD_setup_SL.xlsx?t=' + new Date().getTime();
+                // Fetch forçando a ignorar o cache (Novo ficheiro BD_setup_SLTR.xlsx)
+                const url = 'BD_setup_SLTR.xlsx?t=' + new Date().getTime();
                 const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) throw new Error("Ficheiro não encontrado.");
                 
-                // Tratar a Data da Última Atualização
                 let lastMod = response.headers.get('Last-Modified');
                 let dataHoraAtualizacao;
                 if (lastMod) {
@@ -261,23 +259,33 @@
 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(worksheet);
-
-                processExcelData(json);
                 
-                // Mostrar o painel principal
+                // Ler a aba de Slitters (espera-se que seja a primeira ou tenha o nome BD_setup_sl)
+                let sheetSL = workbook.Sheets['BD_setup_sl'] || workbook.Sheets[workbook.SheetNames[0]];
+                const jsonSL = XLSX.utils.sheet_to_json(sheetSL);
+                dataSL = processExcelData(jsonSL);
+
+                // Ler a aba de Transversais (espera-se que seja a segunda ou tenha o nome BD_setup_tr)
+                let sheetTR = workbook.Sheets['BD_setup_tr'] || workbook.Sheets[workbook.SheetNames[1]];
+                if(sheetTR) {
+                    const jsonTR = XLSX.utils.sheet_to_json(sheetTR);
+                    dataTR = processExcelData(jsonTR);
+                } else {
+                    // Se não existir, duplica SL para evitar erros, mas avisa na consola
+                    console.warn("Aba das Transversais não encontrada. A clonar dados das Slitters por segurança.");
+                    dataTR = dataSL;
+                }
+
                 document.getElementById('main-content').classList.remove('hidden');
                 
-                // Destruir o loading screen
                 const loader = document.getElementById('loading-screen');
                 if (loader) {
                     loader.style.opacity = '0';
                     setTimeout(() => loader.remove(), 500);
                 }
 
-                initCharts();
-                updateDashboard();
+                // Inicia o grupo ativo como Slitter
+                switchGroup('SL');
 
             } catch (error) {
                 console.error(error);
@@ -285,17 +293,17 @@
                 if(loadText) {
                     loadText.innerText = "Erro ao carregar ficheiro!";
                     loadText.classList.add("text-red-400");
-                    document.querySelector('#loading-screen p').innerText = "Verifique se o ficheiro BD_setup_SL.xlsx está no repositório GitHub.";
+                    document.querySelector('#loading-screen p').innerText = "Verifique se o ficheiro BD_setup_SLTR.xlsx está no repositório GitHub.";
                 }
             }
         }
-
-        window.onload = fetchExcelFromGitHub;
 
         function processExcelData(json) {
             let agg = {};
             let uniqueMonthsMap = new Map();
             let yearsSet = new Set();
+            let machinesSet = new Set();
+            let symptomsSet = new Set();
 
             json.forEach(row => {
                 let maq = String(row['Máquina'] || '').trim().toUpperCase();
@@ -303,10 +311,12 @@
                 let time = parseFloat(row['Duração (min)']);
                 let date = row['Início'];
 
-                if (!date || isNaN(time) || !maqMap[maq] || !sintomaMap[sin]) return;
-
+                if (!date || isNaN(time) || !maq || !sin) return;
                 if (!(date instanceof Date)) date = new Date(date);
                 if (isNaN(date.getTime())) return;
+
+                machinesSet.add(maq);
+                symptomsSet.add(sin);
 
                 let ano = date.getUTCFullYear();
                 let mes = date.getUTCMonth();
@@ -316,38 +326,45 @@
                 yearsSet.add(ano);
                 uniqueMonthsMap.set(anoMesNum, label);
 
-                let key = `${anoMesNum}_${maqMap[maq]}_${sintomaMap[sin]}`;
-                if (!agg[key]) agg[key] = { anoMesNum, label, ano, maqId: maqMap[maq], sinId: sintomaMap[sin], time: 0, count: 0 };
+                let key = `${anoMesNum}_${maq}_${sin}`;
+                if (!agg[key]) agg[key] = { anoMesNum, label, ano, maq, sin, time: 0, count: 0 };
                 
                 agg[key].time += time;
                 agg[key].count += 1;
             });
 
+            // Extrair Anos
             let sortedYears = Array.from(yearsSet).sort();
-            currentYear = sortedYears[sortedYears.length - 1] || new Date().getFullYear();
-            prevYear = currentYear - 1;
+            let currentYear = sortedYears[sortedYears.length - 1] || new Date().getFullYear();
+            let prevYear = currentYear - 1;
 
+            // Extrair Meses
             let sortedMonths = Array.from(uniqueMonthsMap.entries()).sort((a,b) => a[0] - b[0]);
-            months = sortedMonths.map(m => m[1]);
-            
+            let months = sortedMonths.map(m => m[1]);
             let monthIdxMap = {};
             months.forEach((m, i) => monthIdxMap[m] = i);
 
-            rawData = Object.values(agg).map(d => ({
+            // Mapear Máquinas e Sintomas
+            let sortedMachines = Array.from(machinesSet).sort();
+            let maqNames = {};
+            sortedMachines.forEach((m, i) => maqNames[i+1] = m);
+            
+            let sortedSymptoms = Array.from(symptomsSet).sort();
+
+            // Gerar Array Final
+            let rawData = Object.values(agg).map(d => ({
                 monthIdx: monthIdxMap[d.label],
                 ano: d.ano,
-                maqId: d.maqId,
-                sintomaId: d.sinId,
+                maqId: sortedMachines.indexOf(d.maq) + 1,
+                sintoma: d.sin,
                 time: d.time,
                 count: d.count
             }));
 
-            document.getElementById('header-subtitle').innerText = `Acompanhamento dinâmico (Dados processados até ${months[months.length-1]})`;
-            document.getElementById('kpi-title-prev').innerText = `Tempo Médio (${prevYear})`;
-            document.getElementById('kpi-vol-title-prev').innerText = `Total Setups (${prevYear})`;
-            document.getElementById('kpi-title-curr').innerText = `Tempo Médio (${currentYear})`;
-            document.getElementById('kpi-vol-title-curr').innerText = `Total Setups (${currentYear})`;
+            return { rawData, months, currentYear, prevYear, maqNames, sortedSymptoms };
         }
+
+        window.onload = fetchExcelFromGitHub;
 
         const dataLabelsConfig = {
             color: '#475569',
@@ -359,22 +376,91 @@
             }
         };
 
+        function switchGroup(group) {
+            // Estilização das Abas
+            const btnSL = document.getElementById('btn-tab-SL');
+            const btnTR = document.getElementById('btn-tab-TR');
+            
+            const activeClasses = "bg-white text-slate-800 shadow-sm border-slate-300".split(" ");
+            const inactiveClasses = "text-slate-500 hover:text-slate-700 border-transparent hover:bg-slate-300/50".split(" ");
+
+            if (group === 'SL') {
+                activeData = dataSL;
+                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup de Slitter`;
+                
+                btnSL.classList.remove(...inactiveClasses);
+                btnSL.classList.add(...activeClasses);
+                btnTR.classList.remove(...activeClasses);
+                btnTR.classList.add(...inactiveClasses);
+            } else {
+                activeData = dataTR;
+                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-emerald-500"></i> Dashboard - Setup de Transversal`;
+                
+                btnTR.classList.remove(...inactiveClasses);
+                btnTR.classList.add(...activeClasses);
+                btnSL.classList.remove(...activeClasses);
+                btnSL.classList.add(...inactiveClasses);
+            }
+
+            document.getElementById('header-subtitle').innerText = `Acompanhamento dinâmico (Dados processados até ${activeData.months[activeData.months.length-1]})`;
+            document.getElementById('kpi-title-prev').innerText = `Tempo Médio (${activeData.prevYear})`;
+            document.getElementById('kpi-vol-title-prev').innerText = `Total Setups (${activeData.prevYear})`;
+            document.getElementById('kpi-title-curr').innerText = `Tempo Médio (${activeData.currentYear})`;
+            document.getElementById('kpi-vol-title-curr').innerText = `Total Setups (${activeData.currentYear})`;
+
+            // Atualizar Filtros HTML
+            const maqSelect = document.getElementById('machineFilter');
+            let maqHtml = `<option value="all">Todas as Máquinas</option>`;
+            Object.keys(activeData.maqNames).forEach(id => {
+                maqHtml += `<option value="${id}">${activeData.maqNames[id]}</option>`;
+            });
+            maqSelect.innerHTML = maqHtml;
+
+            const sinSelect = document.getElementById('sintomaFilter');
+            let sinHtml = `<option value="all">Todos os Sintomas</option>`;
+            activeData.sortedSymptoms.forEach(sin => {
+                sinHtml += `<option value="${sin}">${sin}</option>`;
+            });
+            sinSelect.innerHTML = sinHtml;
+
+            initCharts(); // Recria os gráficos (para acomodar 4 vs 5 máquinas)
+            updateDashboard(); // Processa os dados
+        }
+
         function initCharts() {
             if(typeof ChartDataLabels !== 'undefined') {
                 Chart.register(ChartDataLabels);
             }
+            
+            // Destrói os gráficos antigos se existirem para evitar sobreposição
+            if(lineChart) lineChart.destroy();
+            if(barChart) barChart.destroy();
+            if(volumeChart) volumeChart.destroy();
+
+            // Configurar Datasets baseados no número de máquinas
+            const maqKeys = Object.keys(activeData.maqNames);
+            const lineDatasets = maqKeys.map((id, index) => ({
+                label: activeData.maqNames[id],
+                data: [],
+                borderColor: colorsBorder[index % colorsBorder.length],
+                backgroundColor: colorsBorder[index % colorsBorder.length],
+                tension: 0.1, borderWidth: 2, pointRadius: 3, spanGaps: true
+            }));
+
+            const volDatasets = maqKeys.map((id, index) => ({
+                label: activeData.maqNames[id],
+                data: [],
+                backgroundColor: colorsBgVol[index % colorsBgVol.length]
+            }));
+            
+            const barLabels = maqKeys.map(id => activeData.maqNames[id]);
 
             const ctxLine = document.getElementById('lineChart').getContext('2d');
             lineChart = new Chart(ctxLine, {
                 type: 'line',
                 data: {
-                    labels: months,
-                    datasets: [
-                        { label: 'SLITTER 01', data: [], borderColor: '#2563eb', backgroundColor: '#2563eb', tension: 0.1, borderWidth: 2, pointRadius: 3, spanGaps: true },
-                        { label: 'SLITTER 02', data: [], borderColor: '#d97706', backgroundColor: '#d97706', tension: 0.1, borderWidth: 2, pointRadius: 3, spanGaps: true },
-                        { label: 'SLITTER 03', data: [], borderColor: '#16a34a', backgroundColor: '#16a34a', tension: 0.1, borderWidth: 2, pointRadius: 3, spanGaps: true },
-                        { label: 'SLITTER 04', data: [], borderColor: '#dc2626', backgroundColor: '#dc2626', tension: 0.1, borderWidth: 2, pointRadius: 3, spanGaps: true }
-                    ]
+                    labels: activeData.months,
+                    datasets: lineDatasets
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
@@ -391,10 +477,10 @@
             barChart = new Chart(ctxBar, {
                 type: 'bar',
                 data: {
-                    labels: ['SLITTER 01', 'SLITTER 02', 'SLITTER 03', 'SLITTER 04'],
+                    labels: barLabels,
                     datasets: [
-                        { label: `Média ${prevYear}`, data: [], backgroundColor: '#64748b', borderRadius: 4 },
-                        { label: `Média ${currentYear} (YTD)`, data: [], backgroundColor: '#0ea5e9', borderRadius: 4 }
+                        { label: `Média ${activeData.prevYear}`, data: [], backgroundColor: '#64748b', borderRadius: 4 },
+                        { label: `Média ${activeData.currentYear} (YTD)`, data: [], backgroundColor: '#0ea5e9', borderRadius: 4 }
                     ]
                 },
                 options: {
@@ -412,23 +498,15 @@
             volumeChart = new Chart(ctxVol, {
                 type: 'bar',
                 data: {
-                    labels: months,
-                    datasets: [
-                        { label: 'SLITTER 01', data: [], backgroundColor: '#93c5fd' },
-                        { label: 'SLITTER 02', data: [], backgroundColor: '#fde68a' },
-                        { label: 'SLITTER 03', data: [], backgroundColor: '#86efac' },
-                        { label: 'SLITTER 04', data: [], backgroundColor: '#fca5a5' }
-                    ]
+                    labels: activeData.months,
+                    datasets: volDatasets
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { 
                         legend: { position: 'bottom' },
                         datalabels: {
-                            color: '#1e293b',
-                            font: { weight: '600', size: 9 },
-                            anchor: 'center',
-                            align: 'center',
+                            color: '#1e293b', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center',
                             formatter: function(value) { return (value && value > 0) ? value : ''; }
                         }
                     },
@@ -444,41 +522,42 @@
             const maqVal = document.getElementById('machineFilter').value;
             const sinVal = document.getElementById('sintomaFilter').value;
 
-            const filtered = rawData.filter(d => 
+            const filtered = activeData.rawData.filter(d => 
                 (maqVal === 'all' || d.maqId == maqVal) &&
-                (sinVal === 'all' || d.sintomaId == sinVal)
+                (sinVal === 'all' || d.sintoma === sinVal)
             );
 
-            // Contar quantos meses únicos de dados temos para cada ano para calcular a média mensal
-            const monthsPrevYear = months.filter(m => m.endsWith(String(prevYear).slice(2))).length || 1;
-            const monthsCurrYear = months.filter(m => m.endsWith(String(currentYear).slice(2))).length || 1;
+            const monthsPrevYear = activeData.months.filter(m => m.endsWith(String(activeData.prevYear).slice(2))).length || 1;
+            const monthsCurrYear = activeData.months.filter(m => m.endsWith(String(activeData.currentYear).slice(2))).length || 1;
 
             let tPrev = 0, cPrev = 0, tCurr = 0, cCurr = 0;
             let machineStats = [];
             let setupAvgHTML = '';
 
-            [1, 2, 3, 4].forEach(maq => {
-                const mPrev = filtered.filter(d => d.maqId === maq && d.ano === prevYear);
+            const maqKeys = Object.keys(activeData.maqNames);
+
+            maqKeys.forEach(maqStr => {
+                const maq = parseInt(maqStr);
+                const mPrev = filtered.filter(d => d.maqId === maq && d.ano === activeData.prevYear);
                 const stP = mPrev.reduce((s,c) => s+c.time, 0);
                 const scP = mPrev.reduce((s,c) => s+c.count, 0);
                 const avgP = scP ? (stP / scP) : 0;
                 tPrev += stP; cPrev += scP;
                 
-                const mCurr = filtered.filter(d => d.maqId === maq && d.ano === currentYear);
+                const mCurr = filtered.filter(d => d.maqId === maq && d.ano === activeData.currentYear);
                 const stC = mCurr.reduce((s,c) => s+c.time, 0);
                 const scC = mCurr.reduce((s,c) => s+c.count, 0);
                 const avgC = scC ? (stC / scC) : 0;
                 tCurr += stC; cCurr += scC;
 
                 machineStats.push({
-                    name: maqNames[maq],
+                    name: activeData.maqNames[maq],
                     avgPrev: avgP,
                     avgCurr: avgC,
                     volCurr: scC,
                     diff: (avgP > 0 && avgC > 0) ? (avgP - avgC) : -9999
                 });
 
-                // NOVO: Card Comparativo de Setups Mensais Lado a Lado
                 const avgPrevMonth = (scP / monthsPrevYear).toFixed(1);
                 const avgCurrMonth = (scC / monthsCurrYear).toFixed(1);
                 
@@ -496,17 +575,17 @@
                 
                 setupAvgHTML += `
                     <div class="bg-slate-50 p-2 rounded border border-slate-200 text-center shadow-sm ${opacityClass}">
-                        <p class="text-[10px] text-slate-600 font-bold uppercase border-b border-slate-200 pb-1 mb-1">${maqNames[maq]}</p>
+                        <p class="text-[10px] text-slate-600 font-bold uppercase border-b border-slate-200 pb-1 mb-1 truncate" title="${activeData.maqNames[maq]}">${activeData.maqNames[maq]}</p>
                         <div class="flex justify-between items-center px-1">
                             <div class="text-center">
-                                <p class="text-[9px] text-slate-400 leading-tight">${prevYear}</p>
+                                <p class="text-[9px] text-slate-400 leading-tight">${activeData.prevYear}</p>
                                 <p class="text-sm font-bold text-slate-600">${avgPrevMonth}</p>
                             </div>
                             <div class="${trendColor} text-[10px] px-1">
                                 ${trendIcon}
                             </div>
                             <div class="text-center">
-                                <p class="text-[9px] text-slate-400 leading-tight">${currentYear}</p>
+                                <p class="text-[9px] text-slate-400 leading-tight">${activeData.currentYear}</p>
                                 <p class="text-sm font-bold text-slate-900">${avgCurrMonth}</p>
                             </div>
                         </div>
@@ -524,14 +603,14 @@
             document.getElementById('kpi-avg-curr').innerText = avgCurrOverall;
             document.getElementById('kpi-count-curr').innerText = cCurr.toLocaleString();
 
-            // Lógica do Card de Destaques Dinâmicos
+            // Destaques Dinâmicos
             const diffOverall = (cPrev && cCurr) ? ((tPrev/cPrev) - (tCurr/cCurr)) : 0;
             const textDirection = diffOverall > 0 ? "caiu" : "subiu";
-            document.getElementById('highlight-overall').innerHTML = `A média geral de tempo ${textDirection} de <strong>${avgPrevOverall} min</strong> em ${prevYear} para <strong>${avgCurrOverall} min</strong> em ${currentYear}.`;
+            document.getElementById('highlight-overall').innerHTML = `A média geral de tempo ${textDirection} de <strong>${avgPrevOverall} min</strong> em ${activeData.prevYear} para <strong>${avgCurrOverall} min</strong> em ${activeData.currentYear}.`;
 
             let bestReduction = machineStats.reduce((max, obj) => obj.diff > max.diff ? obj : max, machineStats[0]);
             if(bestReduction && bestReduction.diff > 0) {
-                document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> foi a máquina que mais reduziu seu tempo, passando de ${bestReduction.avgPrev.toFixed(2)} min (${prevYear}) para ${bestReduction.avgCurr.toFixed(2)} min em ${currentYear}.`;
+                document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> foi a máquina que mais reduziu seu tempo, passando de ${bestReduction.avgPrev.toFixed(2)} min (${activeData.prevYear}) para ${bestReduction.avgCurr.toFixed(2)} min em ${activeData.currentYear}.`;
             } else if (bestReduction && bestReduction.diff > -9999) {
                 document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> apresentou a melhor variação no ciclo, passando de ${bestReduction.avgPrev.toFixed(2)} min para ${bestReduction.avgCurr.toFixed(2)} min.`;
             } else {
@@ -540,21 +619,22 @@
 
             let maxVolume = machineStats.reduce((max, obj) => obj.volCurr > max.volCurr ? obj : max, machineStats[0]);
             if (maxVolume && maxVolume.volCurr > 0) {
-                document.getElementById('highlight-volume').innerHTML = `A <strong>${maxVolume.name}</strong> mantém o maior volume (${maxVolume.volCurr} setups em ${currentYear}) e um tempo médio de ciclo de ~${maxVolume.avgCurr.toFixed(2)} min.`;
+                document.getElementById('highlight-volume').innerHTML = `A <strong>${maxVolume.name}</strong> mantém o maior volume (${maxVolume.volCurr} setups em ${activeData.currentYear}) e um tempo médio de ciclo de ~${maxVolume.avgCurr.toFixed(2)} min.`;
             } else {
                 document.getElementById('highlight-volume').innerHTML = `Ainda sem eventos registados no ano corrente.`;
             }
 
             // Atualização dos Gráficos
-            const lineData = [[],[],[],[]];
-            const volData = [[],[],[],[]];
+            const lineData = maqKeys.map(()=>[]);
+            const volData = maqKeys.map(()=>[]);
 
-            [1, 2, 3, 4].forEach(maq => {
-                months.forEach((_, mIdx) => {
+            maqKeys.forEach((maqStr, index) => {
+                const maq = parseInt(maqStr);
+                activeData.months.forEach((_, mIdx) => {
                     const mm = filtered.filter(d => d.maqId === maq && d.monthIdx === mIdx);
                     const scm = mm.reduce((s,c) => s+c.count, 0);
-                    lineData[maq-1].push(scm ? (mm.reduce((s,c) => s+c.time, 0)/scm).toFixed(2) : null);
-                    volData[maq-1].push(scm);
+                    lineData[index].push(scm ? (mm.reduce((s,c) => s+c.time, 0)/scm).toFixed(2) : null);
+                    volData[index].push(scm);
                 });
             });
 
@@ -572,33 +652,36 @@
         }
 
         function updateTable(filtered, maqVal) {
-            const currentYearMonths = months.map((label, idx) => ({label, idx})).filter(x => x.label.endsWith(String(currentYear).slice(2)));
+            const currentYearMonths = activeData.months.map((label, idx) => ({label, idx})).filter(x => x.label.endsWith(String(activeData.currentYear).slice(2)));
             
             let headHtml = `<tr class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
                                 <th class="p-4">Máquina</th>
-                                <th class="p-4 text-center">Média ${prevYear}</th>`;
+                                <th class="p-4 text-center">Média ${activeData.prevYear}</th>`;
             currentYearMonths.forEach(m => { headHtml += `<th class="p-4 text-center">${m.label}</th>`; });
-            headHtml += `<th class="p-4 text-center bg-emerald-50 text-emerald-800 border-l border-slate-200">Média ${currentYear} (YTD)</th></tr>`;
+            headHtml += `<th class="p-4 text-center bg-emerald-50 text-emerald-800 border-l border-slate-200">Média ${activeData.currentYear} (YTD)</th></tr>`;
             document.getElementById('table-head').innerHTML = headHtml;
 
             let html = '';
             let totals = { timePrev: 0, countPrev: 0, currM: currentYearMonths.map(()=>({time:0, count:0})), timeCurr: 0, countCurr: 0 };
 
-            [1, 2, 3, 4].forEach(maq => {
+            const maqKeys = Object.keys(activeData.maqNames);
+
+            maqKeys.forEach(maqStr => {
+                const maq = parseInt(maqStr);
                 const trClass = (maqVal !== 'all' && parseInt(maqVal) !== maq) ? 'opacity-30' : '';
                 
-                const mPrev = filtered.filter(d => d.maqId === maq && d.ano === prevYear);
+                const mPrev = filtered.filter(d => d.maqId === maq && d.ano === activeData.prevYear);
                 const stPrev = mPrev.reduce((s,c) => s+c.time, 0);
                 const scPrev = mPrev.reduce((s,c) => s+c.count, 0);
                 totals.timePrev += stPrev; totals.countPrev += scPrev;
 
-                const mCurr = filtered.filter(d => d.maqId === maq && d.ano === currentYear);
+                const mCurr = filtered.filter(d => d.maqId === maq && d.ano === activeData.currentYear);
                 const stCurr = mCurr.reduce((s,c) => s+c.time, 0);
                 const scCurr = mCurr.reduce((s,c) => s+c.count, 0);
                 totals.timeCurr += stCurr; totals.countCurr += scCurr;
 
                 let rowHtml = `<tr class="hover:bg-slate-50 transition ${trClass}">
-                                <td class="p-4 font-semibold text-slate-800">${maqNames[maq]}</td>
+                                <td class="p-4 font-semibold text-slate-800">${activeData.maqNames[maq]}</td>
                                 <td class="p-4 text-center font-bold text-slate-600 bg-slate-50/50">${scPrev ? (stPrev/scPrev).toFixed(2) : '-'}</td>`;
 
                 currentYearMonths.forEach((mObj, i) => {
@@ -625,22 +708,16 @@
             document.getElementById('table-foot').innerHTML = fhtml;
         }
 
-        // --- NOVA FUNÇÃO PARA EXPORTAR PARA EXCEL ---
+        // --- EXPORTAR PARA EXCEL ---
         function exportToExcel() {
-            // Selecionar a tabela HTML existente no Dashboard
             const table = document.getElementById('resumoTable');
-            
-            // Usar o SheetJS para converter a tabela num ficheiro de Excel (Workbook)
             const wb = XLSX.utils.table_to_book(table, {sheet: "Resumo de Setups"});
-            
-            // Formatador de data para o nome do arquivo
             const today = new Date();
             const dateStr = today.getFullYear() + "-" + 
                             String(today.getMonth() + 1).padStart(2, '0') + "-" + 
                             String(today.getDate()).padStart(2, '0');
                             
-            // Descarregar o ficheiro
-            XLSX.writeFile(wb, `Resumo_Setup_Slitter_${dateStr}.xlsx`);
+            XLSX.writeFile(wb, `Resumo_Setup_${dateStr}.xlsx`);
         }
     </script>
 </body>
