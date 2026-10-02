@@ -17,8 +17,8 @@
     
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
-        #loading-screen { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.5s ease; }
-        .spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        #loading-screen { position: fixed; inset: 0; background: rgba(0, 43, 92, 0.98); z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.5s ease; }
+        .spinner { border: 4px solid rgba(255,255,255,0.2); border-top: 4px solid #00a9e0; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         /* Esconder elementos na impressão */
         @media print { .no-print { display: none !important; } }
@@ -41,17 +41,17 @@
 
     <!-- Painel Oculto por defeito -->
     <div class="min-h-screen flex flex-col hidden" id="main-content">
-        <!-- Cabeçalho -->
-        <header class="bg-slate-900 text-white shadow-md">
-            <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
+        <!-- Cabeçalho (Azul Corporativo Aço Cearense) -->
+        <header class="bg-[#002b5c] text-white shadow-md border-b-4 border-[#00a9e0]">
+            <div class="max-w-7xl mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold flex items-center gap-3" id="main-title">
-                        <i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup
+                        <i class="fa-solid fa-chart-line text-[#00a9e0]"></i> Dashboard - Setup
                     </h1>
-                    <p class="text-slate-400 text-sm mt-1" id="header-subtitle">A processar dados...</p>
+                    <p class="text-slate-300 text-sm mt-1" id="header-subtitle">A processar dados...</p>
                 </div>
                 <div class="mt-4 md:mt-0 flex flex-col items-end gap-3 no-print">
-                    <span id="badge-sync" class="bg-emerald-600/30 text-emerald-300 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/30">
+                    <span id="badge-sync" class="bg-[#00a9e0]/20 text-[#00a9e0] px-3 py-1.5 rounded-full text-xs font-semibold border border-[#00a9e0]/30">
                         <i class="fa-solid fa-clock mr-1"></i> A verificar atualização...
                     </span>
                 </div>
@@ -65,10 +65,10 @@
             <div class="flex justify-center mb-2 no-print">
                 <div class="bg-slate-200 p-1.5 rounded-xl inline-flex shadow-inner gap-1">
                     <button id="btn-tab-SL" onclick="switchGroup('SL')" class="px-8 py-2.5 rounded-lg font-bold text-sm transition-all bg-white text-slate-800 shadow-sm border border-slate-300 flex items-center gap-2">
-                        <i class="fa-solid fa-gears text-blue-500"></i> Slitters
+                        <i class="fa-solid fa-gears text-[#00a9e0]"></i> Slitters
                     </button>
                     <button id="btn-tab-TR" onclick="switchGroup('TR')" class="px-8 py-2.5 rounded-lg font-bold text-sm transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2 border border-transparent hover:bg-slate-300/50">
-                        <i class="fa-solid fa-arrows-left-right text-emerald-600"></i> Transversais
+                        <i class="fa-solid fa-arrows-left-right text-slate-400"></i> Transversais
                     </button>
                 </div>
             </div>
@@ -78,22 +78,22 @@
                 <div class="flex items-center gap-4 flex-wrap w-full">
                     
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <label for="machineFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-industry mr-1 text-blue-500"></i> Máquina:</label>
-                        <select id="machineFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full sm:w-auto">
+                        <label for="machineFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-industry mr-1 text-[#00a9e0]"></i> Máquina:</label>
+                        <select id="machineFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-[#00a9e0] focus:border-[#00a9e0] block p-2 w-full sm:w-auto outline-none transition-colors">
                             <!-- Gerado dinamicamente -->
                         </select>
                     </div>
 
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <label for="sintomaFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1 text-blue-500"></i> Sintoma:</label>
-                        <select id="sintomaFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full max-w-xs">
+                        <label for="sintomaFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1 text-[#00a9e0]"></i> Sintoma:</label>
+                        <select id="sintomaFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-[#00a9e0] focus:border-[#00a9e0] block p-2 w-full max-w-xs outline-none transition-colors">
                             <!-- Gerado dinamicamente -->
                         </select>
                     </div>
 
                     <div class="flex items-center gap-2 w-full sm:w-auto ml-auto border-l border-slate-200 pl-4">
-                        <label for="yearFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-calendar-days mr-1 text-blue-500"></i> Período:</label>
-                        <select id="yearFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full sm:w-auto">
+                        <label for="yearFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-calendar-days mr-1 text-[#00a9e0]"></i> Período:</label>
+                        <select id="yearFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-[#00a9e0] focus:border-[#00a9e0] block p-2 w-full sm:w-auto outline-none transition-colors">
                             <option value="all">Todos os Anos</option>
                             <option value="prev" id="opt-prev-year">Ano Anterior</option>
                             <option value="curr" id="opt-curr-year">Ano Vigente</option>
@@ -104,55 +104,55 @@
 
             <!-- KPIs -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between border-l-4 border-l-slate-400">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="kpi-title-prev">Tempo Médio Global</p>
-                        <h3 class="text-3xl font-bold text-slate-900 mt-2"><span id="kpi-avg-prev">0.00</span> <span class="text-sm font-normal text-slate-500">min</span></h3>
+                        <h3 class="text-3xl font-bold text-[#002b5c] mt-2"><span id="kpi-avg-prev">0.00</span> <span class="text-sm font-normal text-slate-500">min</span></h3>
                         <p class="text-xs text-slate-500 mt-1 font-medium"><i class="fa-solid fa-clock mr-1"></i> Ano Anterior</p>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-stopwatch"></i>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between border-l-4 border-l-slate-400">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="kpi-vol-title-prev">Total Setups</p>
-                        <h3 class="text-3xl font-bold text-slate-900 mt-2" id="kpi-count-prev">0</h3>
+                        <h3 class="text-3xl font-bold text-[#002b5c] mt-2" id="kpi-count-prev">0</h3>
                         <p class="text-xs text-slate-500 mt-1 font-medium"><i class="fa-solid fa-gears mr-1"></i> Ano Anterior</p>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-bars-progress"></i>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between border-l-4 border-l-[#00a9e0]">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="kpi-title-curr">Tempo Médio (YTD)</p>
-                        <h3 class="text-3xl font-bold text-slate-900 mt-2"><span id="kpi-avg-curr">0.00</span> <span class="text-sm font-normal text-slate-500">min</span></h3>
-                        <p class="text-xs text-emerald-600 mt-1 font-medium"><i class="fa-solid fa-calendar mr-1"></i> Ano Corrente</p>
+                        <h3 class="text-3xl font-bold text-[#002b5c] mt-2"><span id="kpi-avg-curr">0.00</span> <span class="text-sm font-normal text-slate-500">min</span></h3>
+                        <p class="text-xs text-[#00a9e0] mt-1 font-medium"><i class="fa-solid fa-calendar mr-1"></i> Ano Corrente</p>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                    <div class="w-12 h-12 rounded-xl bg-[#00a9e0]/10 text-[#00a9e0] flex items-center justify-center text-xl">
                         <i class="fa-solid fa-gauge-high"></i>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between border-l-4 border-l-[#00a9e0]">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="kpi-vol-title-curr">Total Setups (YTD)</p>
-                        <h3 class="text-3xl font-bold text-slate-900 mt-2" id="kpi-count-curr">0</h3>
-                        <p class="text-xs text-blue-600 mt-1 font-medium"><i class="fa-solid fa-calendar-day mr-1"></i> Ano Corrente</p>
+                        <h3 class="text-3xl font-bold text-[#002b5c] mt-2" id="kpi-count-curr">0</h3>
+                        <p class="text-xs text-[#00a9e0] mt-1 font-medium"><i class="fa-solid fa-calendar-day mr-1"></i> Ano Corrente</p>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                    <div class="w-12 h-12 rounded-xl bg-[#00a9e0]/10 text-[#00a9e0] flex items-center justify-center text-xl">
                         <i class="fa-solid fa-chart-pie"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- Gráficos Principais (Não controlados pelo filtro de período) -->
+            <!-- Gráficos Principais -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Gráfico de Linha -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">Evolução do Tempo Médio (Minutos)</h3>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Base Histórica</span>
+                        <h3 class="font-bold text-lg text-[#002b5c]">Evolução do Tempo Médio (Minutos)</h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded border border-slate-200">Base Histórica</span>
                     </div>
                     <div class="relative flex-grow h-[280px]">
                         <canvas id="lineChart"></canvas>
@@ -161,14 +161,14 @@
                 <!-- Gráfico de Barras & Comparativo Mensal de Setups -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">Comparativo de Médias Anuais</h3>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Por Máquina</span>
+                        <h3 class="font-bold text-lg text-[#002b5c]">Comparativo de Médias Anuais</h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded border border-slate-200">Por Máquina</span>
                     </div>
                     <div class="relative flex-grow h-[280px]">
                         <canvas id="barChart"></canvas>
                     </div>
                     <div class="mt-4 pt-4 border-t border-slate-100">
-                        <p class="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider"><i class="fa-solid fa-code-compare text-blue-400 mr-1"></i> Comparativo de Média Mensal de Setups</p>
+                        <p class="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wider"><i class="fa-solid fa-code-compare text-[#00a9e0] mr-1"></i> Comparativo de Média Mensal de Setups</p>
                         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="monthly-setups-grid">
                             <!-- Gerado dinamicamente via JS -->
                         </div>
@@ -176,12 +176,12 @@
                 </div>
             </div>
 
-            <!-- NOVOS GRÁFICOS: Volume e Tempo Total (Controlados pelo filtro de período) -->
+            <!-- NOVOS GRÁFICOS: Volume e Tempo Total -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">Volume Total de Setups</h3>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Qtd. por Mês</span>
+                        <h3 class="font-bold text-lg text-[#002b5c]">Volume Total de Setups</h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded border border-slate-200">Qtd. por Mês</span>
                     </div>
                     <div class="relative flex-grow h-72">
                         <canvas id="volumeChart"></canvas>
@@ -189,8 +189,8 @@
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">Tempo Total de Parada</h3>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Minutos por Mês</span>
+                        <h3 class="font-bold text-lg text-[#002b5c]">Tempo Total de Parada</h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded border border-slate-200">Minutos por Mês</span>
                     </div>
                     <div class="relative flex-grow h-72">
                         <canvas id="timeChart"></canvas>
@@ -201,8 +201,8 @@
             <!-- Destaques & Botões -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center lg:col-span-2">
-                    <h3 class="font-bold text-xl text-slate-800 mb-5 flex items-center">
-                        <span class="text-amber-500 text-2xl mr-2">💡</span> Destaques da Atualização
+                    <h3 class="font-bold text-xl text-[#002b5c] mb-5 flex items-center">
+                        <span class="text-[#00a9e0] text-2xl mr-2"><i class="fa-solid fa-lightbulb"></i></span> Destaques da Atualização
                     </h3>
                     <ul class="space-y-4 text-[15px] text-slate-700 leading-relaxed">
                         <li class="flex items-start gap-2">
@@ -221,24 +221,25 @@
                 </div>
                 
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center gap-4 no-print">
-                    <p class="text-sm font-semibold text-slate-600 mb-2 border-b border-slate-100 pb-2">Opções de Exportação</p>
-                    <button onclick="window.print()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                    <p class="text-sm font-semibold text-[#002b5c] mb-2 border-b border-slate-100 pb-2">Opções de Exportação</p>
+                    <button onclick="window.print()" class="w-full bg-[#002b5c] hover:bg-[#001c3d] text-white font-medium py-3 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-file-pdf"></i> Salvar Painel em PDF
                     </button>
+                    <!-- Mantive o verde padrão do Excel para o botão, pois é uma cor de reconhecimento universal -->
                     <button onclick="exportToExcel()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30">
                         <i class="fa-solid fa-file-excel"></i> Exportar Dados (Excel)
                     </button>
                 </div>
             </div>
 
-            <!-- NOVA TABELA: Impacto de Tempo (Mês vs Ano Vigente) -->
+            <!-- NOVA TABELA: Impacto de Tempo -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-800 text-white">
-                    <h3 class="font-bold text-lg"><i class="fa-solid fa-stopwatch mr-2 text-amber-400"></i> Análise de Desempenho e Impacto (Mês vs. Ano Vigente)</h3>
+                <div class="p-6 border-b border-[#002b5c] flex justify-between items-center bg-[#002b5c] text-white">
+                    <h3 class="font-bold text-lg"><i class="fa-solid fa-stopwatch mr-2 text-[#00a9e0]"></i> Análise de Desempenho e Impacto dos Setups</h3>
                 </div>
                 <div class="overflow-y-auto max-h-[400px] custom-scrollbar">
                     <table id="detailTable" class="w-full text-left border-collapse text-sm whitespace-nowrap">
-                        <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-300 sticky top-0 z-10 shadow-sm">
+                        <thead class="bg-slate-100 text-[#002b5c] font-bold border-b border-slate-300 sticky top-0 z-10 shadow-sm">
                             <tr>
                                 <th class="p-4">Máquina</th>
                                 <th class="p-4">Mês</th>
@@ -258,8 +259,8 @@
 
             <!-- Tabela Resumo Anual -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-table mr-2 text-blue-500"></i> Resumo Anual e Evolução mensal</h3>
+                <div class="p-6 border-b border-[#002b5c] flex justify-between items-center bg-[#002b5c] text-white">
+                    <h3 class="font-bold text-lg"><i class="fa-solid fa-table mr-2 text-[#00a9e0]"></i> Resumo Anual e Evolução mensal</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table id="resumoTable" class="w-full text-left border-collapse text-sm whitespace-nowrap">
@@ -275,14 +276,16 @@
         </main>
 
         <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500 no-print">
-            <p>Dashboard de Acompanhamento de Setup | © Estabilização de Processos Área 02</p>
+            <p>Dashboard de Acompanhamento de Setup | © Estabilização de Processos Área 02 | Aço Cearense</p>
         </footer>
     </div>
 
     <script>
         const ptMonths = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-        const colorsBorder = ['#2563eb', '#d97706', '#16a34a', '#dc2626', '#9333ea', '#0891b2', '#be185d'];
-        const colorsBgVol = ['#93c5fd', '#fde68a', '#86efac', '#fca5a5', '#d8b4fe', '#67e8f9', '#f9a8d4'];
+        
+        // Cores Aço Cearense adaptadas para gráficos (Ciano, Azul Escuro, e cores de contraste)
+        const colorsBorder = ['#00a9e0', '#002b5c', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899'];
+        const colorsBgVol = ['rgba(0, 169, 224, 0.7)', 'rgba(0, 43, 92, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(239, 68, 68, 0.7)', 'rgba(139, 92, 246, 0.7)', 'rgba(236, 72, 153, 0.7)'];
 
         let dataSL = null;
         let dataTR = null;
@@ -400,7 +403,7 @@
         window.onload = fetchExcelFromGitHub;
 
         const dataLabelsConfig = {
-            color: '#475569',
+            color: '#002b5c',
             font: { weight: '600', size: 10 },
             anchor: 'end', align: 'top',
             formatter: function(value) { return (value && value > 0) ? Math.round(value) : ''; }
@@ -409,19 +412,27 @@
         function switchGroup(group) {
             const btnSL = document.getElementById('btn-tab-SL');
             const btnTR = document.getElementById('btn-tab-TR');
-            const activeClasses = "bg-white text-slate-800 shadow-sm border-slate-300".split(" ");
-            const inactiveClasses = "text-slate-500 hover:text-slate-700 border-transparent hover:bg-slate-300/50".split(" ");
+            const activeClasses = "bg-white text-slate-800 shadow-sm border-[#00a9e0]".split(" ");
+            const inactiveClasses = "text-slate-500 hover:text-[#002b5c] border-transparent hover:bg-slate-300/50".split(" ");
 
             if (group === 'SL') {
                 activeData = dataSL;
-                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup Slitters`;
+                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-[#00a9e0]"></i> Dashboard - Setup Slitters`;
+                
                 btnSL.classList.remove(...inactiveClasses); btnSL.classList.add(...activeClasses);
+                btnSL.innerHTML = `<i class="fa-solid fa-gears text-[#00a9e0]"></i> Slitters`;
+                
                 btnTR.classList.remove(...activeClasses); btnTR.classList.add(...inactiveClasses);
+                btnTR.innerHTML = `<i class="fa-solid fa-arrows-left-right text-slate-400"></i> Transversais`;
             } else {
                 activeData = dataTR;
-                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-emerald-500"></i> Dashboard - Setup Transversais`;
+                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-[#00a9e0]"></i> Dashboard - Setup Transversais`;
+                
                 btnTR.classList.remove(...inactiveClasses); btnTR.classList.add(...activeClasses);
+                btnTR.innerHTML = `<i class="fa-solid fa-arrows-left-right text-[#00a9e0]"></i> Transversais`;
+                
                 btnSL.classList.remove(...activeClasses); btnSL.classList.add(...inactiveClasses);
+                btnSL.innerHTML = `<i class="fa-solid fa-gears text-slate-400"></i> Slitters`;
             }
 
             document.getElementById('header-subtitle').innerText = `Acompanhamento dinâmico (Dados processados até ${activeData.months[activeData.months.length-1]})`;
@@ -483,7 +494,7 @@
                 type: 'line', data: { labels: activeData.months, datasets: lineDatasets },
                 options: {
                     responsive: true, maintainAspectRatio: false, layout: { padding: { top: 20 } },
-                    plugins: { legend: { position: 'bottom' }, datalabels: { ...dataLabelsConfig, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 4, padding: 2 } },
+                    plugins: { legend: { position: 'bottom' }, datalabels: { ...dataLabelsConfig, backgroundColor: 'rgba(255,255,255,0.8)', borderRadius: 4, padding: 2 } },
                     scales: { y: { beginAtZero: false, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
                 }
             });
@@ -495,7 +506,7 @@
                     labels: barLabels,
                     datasets: [
                         { label: `Média ${activeData.prevYear}`, data: [], backgroundColor: '#64748b', borderRadius: 4 },
-                        { label: `Média ${activeData.currentYear} (YTD)`, data: [], backgroundColor: '#0ea5e9', borderRadius: 4 }
+                        { label: `Média ${activeData.currentYear} (YTD)`, data: [], backgroundColor: '#00a9e0', borderRadius: 4 }
                     ]
                 },
                 options: {
@@ -510,7 +521,7 @@
                 type: 'bar', data: { labels: activeData.months, datasets: volDatasets },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' }, datalabels: { color: '#1e293b', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center', formatter: function(v) { return (v && v > 0) ? v : ''; } } },
+                    plugins: { legend: { position: 'bottom' }, datalabels: { color: '#002b5c', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center', formatter: function(v) { return (v && v > 0) ? v : ''; } } },
                     scales: { x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }, y: { stacked: true, grid: { color: '#f1f5f9' } } }
                 }
             });
@@ -520,7 +531,7 @@
                 type: 'bar', data: { labels: activeData.months, datasets: timeDatasets },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' }, datalabels: { color: '#1e293b', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center', formatter: function(v) { return (v && v > 0) ? Math.round(v) : ''; } } },
+                    plugins: { legend: { position: 'bottom' }, datalabels: { color: '#002b5c', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center', formatter: function(v) { return (v && v > 0) ? Math.round(v) : ''; } } },
                     scales: { x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }, y: { stacked: true, grid: { color: '#f1f5f9' } } }
                 }
             });
@@ -570,14 +581,14 @@
                 const avgCurrMonth = (scC / monthsCurrYear).toFixed(1);
                 
                 let trendIcon = '<i class="fa-solid fa-minus"></i>'; let trendColor = 'text-slate-300';
-                if (parseFloat(avgCurrMonth) > parseFloat(avgPrevMonth)) { trendIcon = '<i class="fa-solid fa-arrow-trend-up"></i>'; trendColor = 'text-blue-500'; } 
-                else if (parseFloat(avgCurrMonth) < parseFloat(avgPrevMonth)) { trendIcon = '<i class="fa-solid fa-arrow-trend-down"></i>'; trendColor = 'text-amber-500'; }
+                if (parseFloat(avgCurrMonth) > parseFloat(avgPrevMonth)) { trendIcon = '<i class="fa-solid fa-arrow-trend-up"></i>'; trendColor = 'text-red-500'; } // Subiu o tempo = Ruim (Vermelho)
+                else if (parseFloat(avgCurrMonth) < parseFloat(avgPrevMonth)) { trendIcon = '<i class="fa-solid fa-arrow-trend-down"></i>'; trendColor = 'text-emerald-500'; } // Caiu o tempo = Bom (Verde)
 
                 const opacityClass = (maqVal !== 'all' && parseInt(maqVal) !== maq) ? 'opacity-30' : '';
                 
                 setupAvgHTML += `
-                    <div class="bg-slate-50 p-2 rounded border border-slate-200 text-center shadow-sm ${opacityClass}">
-                        <p class="text-[10px] text-slate-600 font-bold uppercase border-b border-slate-200 pb-1 mb-1 truncate" title="${activeData.maqNames[maq]}">${activeData.maqNames[maq]}</p>
+                    <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm ${opacityClass}">
+                        <p class="text-[10px] text-[#002b5c] font-bold uppercase border-b border-slate-200 pb-1 mb-1 truncate" title="${activeData.maqNames[maq]}">${activeData.maqNames[maq]}</p>
                         <div class="flex justify-between items-center px-1">
                             <div class="text-center">
                                 <p class="text-[9px] text-slate-400 leading-tight">${activeData.prevYear}</p>
@@ -586,7 +597,7 @@
                             <div class="${trendColor} text-[10px] px-1">${trendIcon}</div>
                             <div class="text-center">
                                 <p class="text-[9px] text-slate-400 leading-tight">${activeData.currentYear}</p>
-                                <p class="text-sm font-bold text-slate-900">${avgCurrMonth}</p>
+                                <p class="text-sm font-bold text-[#002b5c]">${avgCurrMonth}</p>
                             </div>
                         </div>
                     </div>
@@ -604,15 +615,15 @@
 
             const diffOverall = (cPrev && cCurr) ? ((tPrev/cPrev) - (tCurr/cCurr)) : 0;
             const textDirection = diffOverall > 0 ? "caiu" : "subiu";
-            document.getElementById('highlight-overall').innerHTML = `A média geral de tempo ${textDirection} de <strong>${avgPrevOverall} min</strong> em ${activeData.prevYear} para <strong>${avgCurrOverall} min</strong> em ${activeData.currentYear}.`;
+            document.getElementById('highlight-overall').innerHTML = `A média geral de tempo ${textDirection} de <strong class="text-[#002b5c]">${avgPrevOverall} min</strong> em ${activeData.prevYear} para <strong class="text-[#002b5c]">${avgCurrOverall} min</strong> em ${activeData.currentYear}.`;
 
             let bestReduction = machineStats.reduce((max, obj) => obj.diff > max.diff ? obj : max, machineStats[0]);
-            if(bestReduction && bestReduction.diff > 0) { document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> foi a máquina que mais reduziu seu tempo, passando de ${bestReduction.avgPrev.toFixed(2)} min (${activeData.prevYear}) para ${bestReduction.avgCurr.toFixed(2)} min em ${activeData.currentYear}.`; } 
-            else if (bestReduction && bestReduction.diff > -9999) { document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> apresentou a melhor variação no ciclo, passando de ${bestReduction.avgPrev.toFixed(2)} min para ${bestReduction.avgCurr.toFixed(2)} min.`; } 
+            if(bestReduction && bestReduction.diff > 0) { document.getElementById('highlight-reduction').innerHTML = `A <strong class="text-[#002b5c]">${bestReduction.name}</strong> foi a máquina que mais reduziu seu tempo, passando de ${bestReduction.avgPrev.toFixed(2)} min (${activeData.prevYear}) para ${bestReduction.avgCurr.toFixed(2)} min em ${activeData.currentYear}.`; } 
+            else if (bestReduction && bestReduction.diff > -9999) { document.getElementById('highlight-reduction').innerHTML = `A <strong class="text-[#002b5c]">${bestReduction.name}</strong> apresentou a melhor variação no ciclo, passando de ${bestReduction.avgPrev.toFixed(2)} min para ${bestReduction.avgCurr.toFixed(2)} min.`; } 
             else { document.getElementById('highlight-reduction').innerHTML = `Dados insuficientes para calcular a redução comparativa por máquina.`; }
 
             let maxVolume = machineStats.reduce((max, obj) => obj.volCurr > max.volCurr ? obj : max, machineStats[0]);
-            if (maxVolume && maxVolume.volCurr > 0) { document.getElementById('highlight-volume').innerHTML = `A <strong>${maxVolume.name}</strong> mantém o maior volume (${maxVolume.volCurr} setups em ${activeData.currentYear}) e um tempo médio de ciclo de ~${maxVolume.avgCurr.toFixed(2)} min.`; } 
+            if (maxVolume && maxVolume.volCurr > 0) { document.getElementById('highlight-volume').innerHTML = `A <strong class="text-[#002b5c]">${maxVolume.name}</strong> mantém o maior volume (${maxVolume.volCurr} setups em ${activeData.currentYear}) e um tempo médio de ciclo de ~${maxVolume.avgCurr.toFixed(2)} min.`; } 
             else { document.getElementById('highlight-volume').innerHTML = `Ainda sem eventos registados no ano corrente.`; }
 
             // Atualização dos Gráficos
@@ -698,7 +709,7 @@
 
                     html += `
                         <tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">
-                            <td class="p-4 font-semibold text-slate-800">${activeData.maqNames[maq]}</td>
+                            <td class="p-4 font-semibold text-[#002b5c]">${activeData.maqNames[maq]}</td>
                             <td class="p-4 text-slate-600">${monthLabel}</td>
                             <td class="p-4 text-center font-bold text-slate-700">${count}</td>
                             <td class="p-4 text-center text-slate-700">${totalTime.toFixed(1)} <span class="text-xs font-normal text-slate-400">min</span></td>
@@ -714,10 +725,12 @@
 
         function updateTable(filtered, maqVal) {
             const currentYearMonths = activeData.months.map((label, idx) => ({label, idx})).filter(x => x.label.endsWith(String(activeData.currentYear).slice(2)));
-            let headHtml = `<tr class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+            
+            // Cabeçalho da tabela formatado de acordo com a primeira tabela
+            let headHtml = `<tr class="bg-slate-100 text-[#002b5c] font-bold border-b border-slate-300">
                                 <th class="p-4">Máquina</th><th class="p-4 text-center">Média ${activeData.prevYear}</th>`;
             currentYearMonths.forEach(m => { headHtml += `<th class="p-4 text-center">${m.label}</th>`; });
-            headHtml += `<th class="p-4 text-center bg-emerald-50 text-emerald-800 border-l border-slate-200">Média ${activeData.currentYear} (YTD)</th></tr>`;
+            headHtml += `<th class="p-4 text-center bg-slate-200 text-[#002b5c] border-l border-slate-300">Média ${activeData.currentYear} (YTD)</th></tr>`;
             document.getElementById('table-head').innerHTML = headHtml;
 
             let html = '';
@@ -737,7 +750,7 @@
                 const avgP = scPrev ? (stPrev / scPrev) : 0;
 
                 let rowHtml = `<tr class="hover:bg-slate-50 transition ${trClass}">
-                                <td class="p-4 font-semibold text-slate-800">${activeData.maqNames[maq]}</td>
+                                <td class="p-4 font-semibold text-[#002b5c]">${activeData.maqNames[maq]}</td>
                                 <td class="p-4 text-center font-bold text-slate-600 bg-slate-50/50">${avgP > 0 ? avgP.toFixed(2) : '-'}</td>`;
 
                 currentYearMonths.forEach((mObj, i) => {
@@ -745,7 +758,6 @@
                     const stm = mm.reduce((s,c) => s+c.time, 0); const scm = mm.reduce((s,c) => s+c.count, 0);
                     totals.currM[i].time += stm; totals.currM[i].count += scm;
                     
-                    // Formatação Condicional (Verde se < avgP, Vermelho se > avgP)
                     let colorClass = 'text-slate-800';
                     if (scm && avgP > 0) {
                         const monthAvg = stm / scm;
@@ -755,13 +767,13 @@
                     rowHtml += `<td class="p-4 text-center ${colorClass}">${scm ? (stm/scm).toFixed(2) : '-'}</td>`;
                 });
 
-                rowHtml += `<td class="p-4 text-center font-bold bg-emerald-50/50 text-emerald-900 border-l border-slate-200">${scCurr ? (stCurr/scCurr).toFixed(2) : '-'}</td></tr>`;
+                rowHtml += `<td class="p-4 text-center font-bold bg-slate-100 text-[#002b5c] border-l border-slate-200">${scCurr ? (stCurr/scCurr).toFixed(2) : '-'}</td></tr>`;
                 html += rowHtml;
             });
 
             document.getElementById('table-body').innerHTML = html;
 
-            let fhtml = `<tr class="bg-slate-100 font-bold text-slate-900 border-t border-slate-200"><td class="p-4">Média Geral</td><td class="p-4 text-center text-slate-700">${totals.countPrev ? (totals.timePrev/totals.countPrev).toFixed(2) : '-'}</td>`;
+            let fhtml = `<tr class="bg-slate-100 font-bold text-[#002b5c] border-t border-slate-300"><td class="p-4">Média Geral</td><td class="p-4 text-center text-slate-700">${totals.countPrev ? (totals.timePrev/totals.countPrev).toFixed(2) : '-'}</td>`;
             
             const avgOverallPrev = totals.countPrev ? (totals.timePrev/totals.countPrev) : 0;
             
@@ -774,7 +786,7 @@
                 }
                 fhtml += `<td class="p-4 text-center ${footerColor}">${totals.currM[i].count ? (totals.currM[i].time/totals.currM[i].count).toFixed(2) : '-'}</td>`; 
             });
-            fhtml += `<td class="p-4 text-center bg-emerald-100 text-emerald-950 border-l border-slate-200">${totals.countCurr ? (totals.timeCurr/totals.countCurr).toFixed(2) : '-'}</td></tr>`;
+            fhtml += `<td class="p-4 text-center bg-slate-200 text-[#002b5c] border-l border-slate-300">${totals.countCurr ? (totals.timeCurr/totals.countCurr).toFixed(2) : '-'}</td></tr>`;
             document.getElementById('table-foot').innerHTML = fhtml;
         }
 
