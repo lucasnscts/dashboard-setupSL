@@ -20,8 +20,14 @@
         #loading-screen { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.5s ease; }
         .spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* Esconder abas na impressão */
+        /* Esconder elementos na impressão */
         @media print { .no-print { display: none !important; } }
+        
+        /* Custom scrollbar para a tabela detalhada */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="text-slate-800 antialiased overflow-x-hidden">
@@ -40,7 +46,7 @@
             <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold flex items-center gap-3" id="main-title">
-                        <i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup de Slitter
+                        <i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup
                     </h1>
                     <p class="text-slate-400 text-sm mt-1" id="header-subtitle">A processar dados...</p>
                 </div>
@@ -130,7 +136,7 @@
                 </div>
             </div>
 
-            <!-- Gráficos -->
+            <!-- Gráficos Principais -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Gráfico de Linha -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
@@ -160,56 +166,92 @@
                 </div>
             </div>
 
-            <!-- Gráfico de Volume & Destaques -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2 flex flex-col">
+            <!-- NOVOS GRÁFICOS: Volume e Tempo Total -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Gráfico de Volume Mensal -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-slate-800">Volume Total de Setups (Por Mês)</h3>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Quantidade</span>
+                        <h3 class="font-bold text-lg text-slate-800">Volume Total de Setups</h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Qtd. por Mês</span>
                     </div>
                     <div class="relative flex-grow h-72">
                         <canvas id="volumeChart"></canvas>
                     </div>
                 </div>
-                
-                <!-- Destaques Card -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <h3 class="font-bold text-xl text-slate-800 mb-5 flex items-center">
-                            <span class="text-amber-500 text-2xl mr-2">💡</span> Destaques da Atualização
-                        </h3>
-                        <ul class="space-y-4 text-[15px] text-slate-700 leading-relaxed">
-                            <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span id="highlight-overall">A carregar dados globais...</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span id="highlight-reduction">A calcular reduções por máquina...</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span id="highlight-volume">A analisar estatísticas de volume...</span>
-                            </li>
-                        </ul>
+                <!-- NOVO: Gráfico de Tempo Total Mensal -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-lg text-slate-800">Tempo Total de Parada</h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Minutos por Mês</span>
                     </div>
-                    
-                    <!-- Botões de Exportação -->
-                    <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-3 no-print">
-                        <button onclick="window.print()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-file-pdf"></i> Salvar Painel em PDF
-                        </button>
-                        <button onclick="exportToExcel()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-file-excel"></i> Exportar Resumo p/ Excel
-                        </button>
+                    <div class="relative flex-grow h-72">
+                        <canvas id="timeChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabela Dinâmica -->
+            <!-- Destaques & Botões -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center lg:col-span-2">
+                    <h3 class="font-bold text-xl text-slate-800 mb-5 flex items-center">
+                        <span class="text-amber-500 text-2xl mr-2">💡</span> Destaques da Atualização
+                    </h3>
+                    <ul class="space-y-4 text-[15px] text-slate-700 leading-relaxed">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            <span id="highlight-overall">A carregar dados globais...</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            <span id="highlight-reduction">A calcular reduções por máquina...</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            <span id="highlight-volume">A analisar estatísticas de volume...</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center gap-4 no-print">
+                    <p class="text-sm font-semibold text-slate-600 mb-2 border-b border-slate-100 pb-2">Opções de Exportação</p>
+                    <button onclick="window.print()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> Salvar Painel em PDF
+                    </button>
+                    <button onclick="exportToExcel()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30">
+                        <i class="fa-solid fa-file-excel"></i> Exportar Dados (Excel)
+                    </button>
+                </div>
+            </div>
+
+            <!-- NOVA TABELA: Impacto de Tempo (Mês vs Ano Vigente) -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-800 text-white">
+                    <h3 class="font-bold text-lg"><i class="fa-solid fa-stopwatch mr-2 text-amber-400"></i> Análise de Desempenho e Impacto (Mês vs. Ano Vigente)</h3>
+                </div>
+                <div class="overflow-y-auto max-h-[400px] custom-scrollbar">
+                    <table id="detailTable" class="w-full text-left border-collapse text-sm whitespace-nowrap">
+                        <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-300 sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-4">Máquina</th>
+                                <th class="p-4">Mês</th>
+                                <th class="p-4 text-center">Qtd Setups</th>
+                                <th class="p-4 text-center">Tempo Total</th>
+                                <th class="p-4 text-center">Tempo Médio Mês</th>
+                                <th class="p-4 text-center">Média Alvo (Ano Vigente)</th>
+                                <th class="p-4 text-right">Impacto (Tempo Excedente/Poupado)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detail-table-body" class="divide-y divide-slate-100">
+                            <!-- Gerado via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tabela Resumo Anual -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-table mr-2 text-blue-500"></i> Resumo de Tempos Médios (Minutos)</h3>
+                    <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-table mr-2 text-blue-500"></i> Resumo Anual e Evolução YTD (Minutos)</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table id="resumoTable" class="w-full text-left border-collapse text-sm whitespace-nowrap">
@@ -221,6 +263,7 @@
                     </table>
                 </div>
             </div>
+
         </main>
 
         <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500 no-print">
@@ -230,48 +273,35 @@
 
     <script>
         const ptMonths = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-        const colorsBorder = ['#2563eb', '#d97706', '#16a34a', '#dc2626', '#9333ea'];
-        const colorsBgVol = ['#93c5fd', '#fde68a', '#86efac', '#fca5a5', '#d8b4fe'];
+        const colorsBorder = ['#2563eb', '#d97706', '#16a34a', '#dc2626', '#9333ea', '#0891b2', '#be185d'];
+        const colorsBgVol = ['#93c5fd', '#fde68a', '#86efac', '#fca5a5', '#d8b4fe', '#67e8f9', '#f9a8d4'];
 
         let dataSL = null;
         let dataTR = null;
         let activeData = null;
         
-        let lineChart, barChart, volumeChart;
+        let lineChart, barChart, volumeChart, timeChart;
 
         async function fetchExcelFromGitHub() {
             try {
-                // Fetch forçando a ignorar o cache (Novo ficheiro BD_setup_SLTR.xlsx)
                 const url = 'BD_setup_SLTR.xlsx?t=' + new Date().getTime();
                 const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) throw new Error("Ficheiro não encontrado.");
                 
                 let lastMod = response.headers.get('Last-Modified');
-                let dataHoraAtualizacao;
-                if (lastMod) {
-                    const d = new Date(lastMod);
-                    dataHoraAtualizacao = d.toLocaleDateString('pt-PT') + ' às ' + d.toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit'});
-                } else {
-                    const d = new Date();
-                    dataHoraAtualizacao = d.toLocaleDateString('pt-PT') + ' às ' + d.toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit'});
-                }
+                let dataHoraAtualizacao = lastMod ? new Date(lastMod).toLocaleString('pt-PT') : new Date().toLocaleString('pt-PT');
                 document.getElementById('badge-sync').innerHTML = `<i class="fa-solid fa-clock mr-1"></i> Atualizado em: ${dataHoraAtualizacao}`;
 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
                 
-                // Ler a aba de Slitters (espera-se que seja a primeira ou tenha o nome BD_setup_sl)
                 let sheetSL = workbook.Sheets['BD_setup_sl'] || workbook.Sheets[workbook.SheetNames[0]];
-                const jsonSL = XLSX.utils.sheet_to_json(sheetSL);
-                dataSL = processExcelData(jsonSL);
+                dataSL = processExcelData(XLSX.utils.sheet_to_json(sheetSL));
 
-                // Ler a aba de Transversais (espera-se que seja a segunda ou tenha o nome BD_setup_tr)
                 let sheetTR = workbook.Sheets['BD_setup_tr'] || workbook.Sheets[workbook.SheetNames[1]];
                 if(sheetTR) {
-                    const jsonTR = XLSX.utils.sheet_to_json(sheetTR);
-                    dataTR = processExcelData(jsonTR);
+                    dataTR = processExcelData(XLSX.utils.sheet_to_json(sheetTR));
                 } else {
-                    // Se não existir, duplica SL para evitar erros, mas avisa na consola
                     console.warn("Aba das Transversais não encontrada. A clonar dados das Slitters por segurança.");
                     dataTR = dataSL;
                 }
@@ -284,7 +314,6 @@
                     setTimeout(() => loader.remove(), 500);
                 }
 
-                // Inicia o grupo ativo como Slitter
                 switchGroup('SL');
 
             } catch (error) {
@@ -333,25 +362,21 @@
                 agg[key].count += 1;
             });
 
-            // Extrair Anos
             let sortedYears = Array.from(yearsSet).sort();
             let currentYear = sortedYears[sortedYears.length - 1] || new Date().getFullYear();
             let prevYear = currentYear - 1;
 
-            // Extrair Meses
             let sortedMonths = Array.from(uniqueMonthsMap.entries()).sort((a,b) => a[0] - b[0]);
             let months = sortedMonths.map(m => m[1]);
             let monthIdxMap = {};
             months.forEach((m, i) => monthIdxMap[m] = i);
 
-            // Mapear Máquinas e Sintomas
             let sortedMachines = Array.from(machinesSet).sort();
             let maqNames = {};
             sortedMachines.forEach((m, i) => maqNames[i+1] = m);
             
             let sortedSymptoms = Array.from(symptomsSet).sort();
 
-            // Gerar Array Final
             let rawData = Object.values(agg).map(d => ({
                 monthIdx: monthIdxMap[d.label],
                 ano: d.ano,
@@ -369,37 +394,26 @@
         const dataLabelsConfig = {
             color: '#475569',
             font: { weight: '600', size: 10 },
-            anchor: 'end',
-            align: 'top',
-            formatter: function(value) {
-                return (value && value > 0) ? Math.round(value) : '';
-            }
+            anchor: 'end', align: 'top',
+            formatter: function(value) { return (value && value > 0) ? Math.round(value) : ''; }
         };
 
         function switchGroup(group) {
-            // Estilização das Abas
             const btnSL = document.getElementById('btn-tab-SL');
             const btnTR = document.getElementById('btn-tab-TR');
-            
             const activeClasses = "bg-white text-slate-800 shadow-sm border-slate-300".split(" ");
             const inactiveClasses = "text-slate-500 hover:text-slate-700 border-transparent hover:bg-slate-300/50".split(" ");
 
             if (group === 'SL') {
                 activeData = dataSL;
-                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup de Slitter`;
-                
-                btnSL.classList.remove(...inactiveClasses);
-                btnSL.classList.add(...activeClasses);
-                btnTR.classList.remove(...activeClasses);
-                btnTR.classList.add(...inactiveClasses);
+                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-blue-400"></i> Dashboard - Setup Slitters`;
+                btnSL.classList.remove(...inactiveClasses); btnSL.classList.add(...activeClasses);
+                btnTR.classList.remove(...activeClasses); btnTR.classList.add(...inactiveClasses);
             } else {
                 activeData = dataTR;
-                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-emerald-500"></i> Dashboard - Setup de Transversal`;
-                
-                btnTR.classList.remove(...inactiveClasses);
-                btnTR.classList.add(...activeClasses);
-                btnSL.classList.remove(...activeClasses);
-                btnSL.classList.add(...inactiveClasses);
+                document.getElementById('main-title').innerHTML = `<i class="fa-solid fa-chart-line text-emerald-500"></i> Dashboard - Setup Transversais`;
+                btnTR.classList.remove(...inactiveClasses); btnTR.classList.add(...activeClasses);
+                btnSL.classList.remove(...activeClasses); btnSL.classList.add(...inactiveClasses);
             }
 
             document.getElementById('header-subtitle').innerText = `Acompanhamento dinâmico (Dados processados até ${activeData.months[activeData.months.length-1]})`;
@@ -408,67 +422,54 @@
             document.getElementById('kpi-title-curr').innerText = `Tempo Médio (${activeData.currentYear})`;
             document.getElementById('kpi-vol-title-curr').innerText = `Total Setups (${activeData.currentYear})`;
 
-            // Atualizar Filtros HTML
             const maqSelect = document.getElementById('machineFilter');
             let maqHtml = `<option value="all">Todas as Máquinas</option>`;
-            Object.keys(activeData.maqNames).forEach(id => {
-                maqHtml += `<option value="${id}">${activeData.maqNames[id]}</option>`;
-            });
+            Object.keys(activeData.maqNames).forEach(id => { maqHtml += `<option value="${id}">${activeData.maqNames[id]}</option>`; });
             maqSelect.innerHTML = maqHtml;
 
             const sinSelect = document.getElementById('sintomaFilter');
             let sinHtml = `<option value="all">Todos os Sintomas</option>`;
-            activeData.sortedSymptoms.forEach(sin => {
-                sinHtml += `<option value="${sin}">${sin}</option>`;
-            });
+            activeData.sortedSymptoms.forEach(sin => { sinHtml += `<option value="${sin}">${sin}</option>`; });
             sinSelect.innerHTML = sinHtml;
 
-            initCharts(); // Recria os gráficos (para acomodar 4 vs 5 máquinas)
-            updateDashboard(); // Processa os dados
+            initCharts(); 
+            updateDashboard(); 
         }
 
         function initCharts() {
-            if(typeof ChartDataLabels !== 'undefined') {
-                Chart.register(ChartDataLabels);
-            }
+            if(typeof ChartDataLabels !== 'undefined') { Chart.register(ChartDataLabels); }
             
-            // Destrói os gráficos antigos se existirem para evitar sobreposição
             if(lineChart) lineChart.destroy();
             if(barChart) barChart.destroy();
             if(volumeChart) volumeChart.destroy();
+            if(timeChart) timeChart.destroy();
 
-            // Configurar Datasets baseados no número de máquinas
             const maqKeys = Object.keys(activeData.maqNames);
+            const barLabels = maqKeys.map(id => activeData.maqNames[id]);
+
             const lineDatasets = maqKeys.map((id, index) => ({
-                label: activeData.maqNames[id],
-                data: [],
+                label: activeData.maqNames[id], data: [],
                 borderColor: colorsBorder[index % colorsBorder.length],
                 backgroundColor: colorsBorder[index % colorsBorder.length],
                 tension: 0.1, borderWidth: 2, pointRadius: 3, spanGaps: true
             }));
 
             const volDatasets = maqKeys.map((id, index) => ({
-                label: activeData.maqNames[id],
-                data: [],
+                label: activeData.maqNames[id], data: [],
                 backgroundColor: colorsBgVol[index % colorsBgVol.length]
             }));
             
-            const barLabels = maqKeys.map(id => activeData.maqNames[id]);
+            const timeDatasets = maqKeys.map((id, index) => ({
+                label: activeData.maqNames[id], data: [],
+                backgroundColor: colorsBgVol[index % colorsBgVol.length]
+            }));
 
             const ctxLine = document.getElementById('lineChart').getContext('2d');
             lineChart = new Chart(ctxLine, {
-                type: 'line',
-                data: {
-                    labels: activeData.months,
-                    datasets: lineDatasets
-                },
+                type: 'line', data: { labels: activeData.months, datasets: lineDatasets },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    layout: { padding: { top: 20 } },
-                    plugins: { 
-                        legend: { position: 'bottom' },
-                        datalabels: { ...dataLabelsConfig, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 4, padding: 2 } 
-                    },
+                    responsive: true, maintainAspectRatio: false, layout: { padding: { top: 20 } },
+                    plugins: { legend: { position: 'bottom' }, datalabels: { ...dataLabelsConfig, backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 4, padding: 2 } },
                     scales: { y: { beginAtZero: false, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
                 }
             });
@@ -484,36 +485,29 @@
                     ]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    layout: { padding: { top: 20 } },
-                    plugins: { 
-                        legend: { position: 'bottom' },
-                        datalabels: dataLabelsConfig
-                    },
+                    responsive: true, maintainAspectRatio: false, layout: { padding: { top: 20 } },
+                    plugins: { legend: { position: 'bottom' }, datalabels: dataLabelsConfig },
                     scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
                 }
             });
 
             const ctxVol = document.getElementById('volumeChart').getContext('2d');
             volumeChart = new Chart(ctxVol, {
-                type: 'bar',
-                data: {
-                    labels: activeData.months,
-                    datasets: volDatasets
-                },
+                type: 'bar', data: { labels: activeData.months, datasets: volDatasets },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { position: 'bottom' },
-                        datalabels: {
-                            color: '#1e293b', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center',
-                            formatter: function(value) { return (value && value > 0) ? value : ''; }
-                        }
-                    },
-                    scales: {
-                        x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } },
-                        y: { stacked: true, grid: { color: '#f1f5f9' } }
-                    }
+                    plugins: { legend: { position: 'bottom' }, datalabels: { color: '#1e293b', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center', formatter: function(v) { return (v && v > 0) ? v : ''; } } },
+                    scales: { x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }, y: { stacked: true, grid: { color: '#f1f5f9' } } }
+                }
+            });
+
+            const ctxTime = document.getElementById('timeChart').getContext('2d');
+            timeChart = new Chart(ctxTime, {
+                type: 'bar', data: { labels: activeData.months, datasets: timeDatasets },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' }, datalabels: { color: '#1e293b', font: { weight: '600', size: 9 }, anchor: 'center', align: 'center', formatter: function(v) { return (v && v > 0) ? Math.round(v) : ''; } } },
+                    scales: { x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }, y: { stacked: true, grid: { color: '#f1f5f9' } } }
                 }
             });
         }
@@ -523,8 +517,7 @@
             const sinVal = document.getElementById('sintomaFilter').value;
 
             const filtered = activeData.rawData.filter(d => 
-                (maqVal === 'all' || d.maqId == maqVal) &&
-                (sinVal === 'all' || d.sintoma === sinVal)
+                (maqVal === 'all' || d.maqId == maqVal) && (sinVal === 'all' || d.sintoma === sinVal)
             );
 
             const monthsPrevYear = activeData.months.filter(m => m.endsWith(String(activeData.prevYear).slice(2))).length || 1;
@@ -533,11 +526,9 @@
             let tPrev = 0, cPrev = 0, tCurr = 0, cCurr = 0;
             let machineStats = [];
             let setupAvgHTML = '';
+            const maqKeys = Object.keys(activeData.maqNames).map(Number);
 
-            const maqKeys = Object.keys(activeData.maqNames);
-
-            maqKeys.forEach(maqStr => {
-                const maq = parseInt(maqStr);
+            maqKeys.forEach(maq => {
                 const mPrev = filtered.filter(d => d.maqId === maq && d.ano === activeData.prevYear);
                 const stP = mPrev.reduce((s,c) => s+c.time, 0);
                 const scP = mPrev.reduce((s,c) => s+c.count, 0);
@@ -550,26 +541,14 @@
                 const avgC = scC ? (stC / scC) : 0;
                 tCurr += stC; cCurr += scC;
 
-                machineStats.push({
-                    name: activeData.maqNames[maq],
-                    avgPrev: avgP,
-                    avgCurr: avgC,
-                    volCurr: scC,
-                    diff: (avgP > 0 && avgC > 0) ? (avgP - avgC) : -9999
-                });
+                machineStats.push({ name: activeData.maqNames[maq], avgPrev: avgP, avgCurr: avgC, volCurr: scC, diff: (avgP > 0 && avgC > 0) ? (avgP - avgC) : -9999 });
 
                 const avgPrevMonth = (scP / monthsPrevYear).toFixed(1);
                 const avgCurrMonth = (scC / monthsCurrYear).toFixed(1);
                 
-                let trendIcon = '<i class="fa-solid fa-minus"></i>';
-                let trendColor = 'text-slate-300';
-                if (parseFloat(avgCurrMonth) > parseFloat(avgPrevMonth)) {
-                    trendIcon = '<i class="fa-solid fa-arrow-trend-up"></i>';
-                    trendColor = 'text-blue-500'; 
-                } else if (parseFloat(avgCurrMonth) < parseFloat(avgPrevMonth)) {
-                    trendIcon = '<i class="fa-solid fa-arrow-trend-down"></i>';
-                    trendColor = 'text-amber-500';
-                }
+                let trendIcon = '<i class="fa-solid fa-minus"></i>'; let trendColor = 'text-slate-300';
+                if (parseFloat(avgCurrMonth) > parseFloat(avgPrevMonth)) { trendIcon = '<i class="fa-solid fa-arrow-trend-up"></i>'; trendColor = 'text-blue-500'; } 
+                else if (parseFloat(avgCurrMonth) < parseFloat(avgPrevMonth)) { trendIcon = '<i class="fa-solid fa-arrow-trend-down"></i>'; trendColor = 'text-amber-500'; }
 
                 const opacityClass = (maqVal !== 'all' && parseInt(maqVal) !== maq) ? 'opacity-30' : '';
                 
@@ -581,9 +560,7 @@
                                 <p class="text-[9px] text-slate-400 leading-tight">${activeData.prevYear}</p>
                                 <p class="text-sm font-bold text-slate-600">${avgPrevMonth}</p>
                             </div>
-                            <div class="${trendColor} text-[10px] px-1">
-                                ${trendIcon}
-                            </div>
+                            <div class="${trendColor} text-[10px] px-1">${trendIcon}</div>
                             <div class="text-center">
                                 <p class="text-[9px] text-slate-400 leading-tight">${activeData.currentYear}</p>
                                 <p class="text-sm font-bold text-slate-900">${avgCurrMonth}</p>
@@ -595,7 +572,6 @@
 
             document.getElementById('monthly-setups-grid').innerHTML = setupAvgHTML;
 
-            // Update KPI Cards
             const avgPrevOverall = cPrev ? (tPrev/cPrev).toFixed(2) : '0.00';
             const avgCurrOverall = cCurr ? (tCurr/cCurr).toFixed(2) : '0.00';
             document.getElementById('kpi-avg-prev').innerText = avgPrevOverall;
@@ -603,81 +579,119 @@
             document.getElementById('kpi-avg-curr').innerText = avgCurrOverall;
             document.getElementById('kpi-count-curr').innerText = cCurr.toLocaleString();
 
-            // Destaques Dinâmicos
             const diffOverall = (cPrev && cCurr) ? ((tPrev/cPrev) - (tCurr/cCurr)) : 0;
             const textDirection = diffOverall > 0 ? "caiu" : "subiu";
             document.getElementById('highlight-overall').innerHTML = `A média geral de tempo ${textDirection} de <strong>${avgPrevOverall} min</strong> em ${activeData.prevYear} para <strong>${avgCurrOverall} min</strong> em ${activeData.currentYear}.`;
 
             let bestReduction = machineStats.reduce((max, obj) => obj.diff > max.diff ? obj : max, machineStats[0]);
-            if(bestReduction && bestReduction.diff > 0) {
-                document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> foi a máquina que mais reduziu seu tempo, passando de ${bestReduction.avgPrev.toFixed(2)} min (${activeData.prevYear}) para ${bestReduction.avgCurr.toFixed(2)} min em ${activeData.currentYear}.`;
-            } else if (bestReduction && bestReduction.diff > -9999) {
-                document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> apresentou a melhor variação no ciclo, passando de ${bestReduction.avgPrev.toFixed(2)} min para ${bestReduction.avgCurr.toFixed(2)} min.`;
-            } else {
-                document.getElementById('highlight-reduction').innerHTML = `Dados insuficientes para calcular a redução comparativa por máquina.`;
-            }
+            if(bestReduction && bestReduction.diff > 0) { document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> foi a máquina que mais reduziu seu tempo, passando de ${bestReduction.avgPrev.toFixed(2)} min (${activeData.prevYear}) para ${bestReduction.avgCurr.toFixed(2)} min em ${activeData.currentYear}.`; } 
+            else if (bestReduction && bestReduction.diff > -9999) { document.getElementById('highlight-reduction').innerHTML = `A <strong>${bestReduction.name}</strong> apresentou a melhor variação no ciclo, passando de ${bestReduction.avgPrev.toFixed(2)} min para ${bestReduction.avgCurr.toFixed(2)} min.`; } 
+            else { document.getElementById('highlight-reduction').innerHTML = `Dados insuficientes para calcular a redução comparativa por máquina.`; }
 
             let maxVolume = machineStats.reduce((max, obj) => obj.volCurr > max.volCurr ? obj : max, machineStats[0]);
-            if (maxVolume && maxVolume.volCurr > 0) {
-                document.getElementById('highlight-volume').innerHTML = `A <strong>${maxVolume.name}</strong> mantém o maior volume (${maxVolume.volCurr} setups em ${activeData.currentYear}) e um tempo médio de ciclo de ~${maxVolume.avgCurr.toFixed(2)} min.`;
-            } else {
-                document.getElementById('highlight-volume').innerHTML = `Ainda sem eventos registados no ano corrente.`;
-            }
+            if (maxVolume && maxVolume.volCurr > 0) { document.getElementById('highlight-volume').innerHTML = `A <strong>${maxVolume.name}</strong> mantém o maior volume (${maxVolume.volCurr} setups em ${activeData.currentYear}) e um tempo médio de ciclo de ~${maxVolume.avgCurr.toFixed(2)} min.`; } 
+            else { document.getElementById('highlight-volume').innerHTML = `Ainda sem eventos registados no ano corrente.`; }
 
-            // Atualização dos Gráficos
             const lineData = maqKeys.map(()=>[]);
             const volData = maqKeys.map(()=>[]);
+            const timeData = maqKeys.map(()=>[]);
 
-            maqKeys.forEach((maqStr, index) => {
-                const maq = parseInt(maqStr);
+            maqKeys.forEach((maq, index) => {
                 activeData.months.forEach((_, mIdx) => {
                     const mm = filtered.filter(d => d.maqId === maq && d.monthIdx === mIdx);
+                    const stm = mm.reduce((s,c) => s+c.time, 0);
                     const scm = mm.reduce((s,c) => s+c.count, 0);
-                    lineData[index].push(scm ? (mm.reduce((s,c) => s+c.time, 0)/scm).toFixed(2) : null);
+                    lineData[index].push(scm ? (stm/scm).toFixed(2) : null);
                     volData[index].push(scm);
+                    timeData[index].push(stm > 0 ? Math.round(stm) : null);
                 });
             });
 
-            lineChart.data.datasets.forEach((ds, i) => { ds.data = lineData[i]; ds.hidden = (maqVal !== 'all' && parseInt(maqVal) !== (i+1)); });
-            lineChart.update();
-
-            volumeChart.data.datasets.forEach((ds, i) => { ds.data = volData[i]; ds.hidden = (maqVal !== 'all' && parseInt(maqVal) !== (i+1)); });
-            volumeChart.update();
+            lineChart.data.datasets.forEach((ds, i) => { ds.data = lineData[i]; ds.hidden = (maqVal !== 'all' && parseInt(maqVal) !== maqKeys[i]); }); lineChart.update();
+            volumeChart.data.datasets.forEach((ds, i) => { ds.data = volData[i]; ds.hidden = (maqVal !== 'all' && parseInt(maqVal) !== maqKeys[i]); }); volumeChart.update();
+            timeChart.data.datasets.forEach((ds, i) => { ds.data = timeData[i]; ds.hidden = (maqVal !== 'all' && parseInt(maqVal) !== maqKeys[i]); }); timeChart.update();
 
             barChart.data.datasets[0].data = machineStats.map(m => m.avgPrev > 0 ? m.avgPrev.toFixed(2) : 0);
             barChart.data.datasets[1].data = machineStats.map(m => m.avgCurr > 0 ? m.avgCurr.toFixed(2) : 0);
             barChart.update();
 
             updateTable(filtered, maqVal);
+            updateDetailTable(filtered, maqVal);
+        }
+
+        function updateDetailTable(filtered, maqVal) {
+            const tbody = document.getElementById('detail-table-body');
+            let html = '';
+            const maqKeys = Object.keys(activeData.maqNames).map(Number);
+            
+            maqKeys.forEach(maq => {
+                if (maqVal !== 'all' && parseInt(maqVal) !== maq) return;
+                
+                const mCurr = filtered.filter(d => d.maqId === maq && d.ano === activeData.currentYear);
+                const stCurr = mCurr.reduce((s,c) => s+c.time, 0);
+                const scCurr = mCurr.reduce((s,c) => s+c.count, 0);
+                const targetAvg = scCurr ? (stCurr / scCurr) : 0;
+                
+                activeData.months.forEach((monthLabel, mIdx) => {
+                    const mm = filtered.filter(d => d.maqId === maq && d.monthIdx === mIdx);
+                    const count = mm.reduce((s,c) => s+c.count, 0);
+                    if(count === 0) return; 
+                    
+                    const totalTime = mm.reduce((s,c) => s+c.time, 0);
+                    const monthAvg = totalTime / count;
+                    
+                    let excessTime = 0;
+                    let impactHtml = '';
+                    
+                    if (targetAvg > 0) {
+                        excessTime = (monthAvg - targetAvg) * count;
+                        if (excessTime > 0.5) { 
+                            impactHtml = `<span class="text-red-600 font-bold flex items-center justify-end gap-1"><i class="fa-solid fa-arrow-trend-up"></i> +${excessTime.toFixed(1)} min (Excedente)</span>`;
+                        } else if (excessTime < -0.5) {
+                            impactHtml = `<span class="text-emerald-600 font-bold flex items-center justify-end gap-1"><i class="fa-solid fa-arrow-trend-down"></i> ${excessTime.toFixed(1)} min (Poupado)</span>`;
+                        } else {
+                            impactHtml = `<span class="text-slate-500 font-medium">Na média</span>`;
+                        }
+                    } else {
+                        impactHtml = `<span class="text-slate-400 text-xs">Sem ref. no ano</span>`;
+                    }
+
+                    html += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">
+                            <td class="p-4 font-semibold text-slate-800">${activeData.maqNames[maq]}</td>
+                            <td class="p-4 text-slate-600">${monthLabel}</td>
+                            <td class="p-4 text-center font-bold text-slate-700">${count}</td>
+                            <td class="p-4 text-center text-slate-700">${totalTime.toFixed(1)} <span class="text-xs font-normal text-slate-400">min</span></td>
+                            <td class="p-4 text-center font-bold text-slate-800">${monthAvg.toFixed(1)} <span class="text-xs font-normal text-slate-400">min</span></td>
+                            <td class="p-4 text-center text-slate-500">${targetAvg > 0 ? targetAvg.toFixed(1) + ' <span class="text-xs font-normal text-slate-400">min</span>' : '-'}</td>
+                            <td class="p-4 text-right">${impactHtml}</td>
+                        </tr>
+                    `;
+                });
+            });
+            tbody.innerHTML = html;
         }
 
         function updateTable(filtered, maqVal) {
             const currentYearMonths = activeData.months.map((label, idx) => ({label, idx})).filter(x => x.label.endsWith(String(activeData.currentYear).slice(2)));
-            
             let headHtml = `<tr class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-                                <th class="p-4">Máquina</th>
-                                <th class="p-4 text-center">Média ${activeData.prevYear}</th>`;
+                                <th class="p-4">Máquina</th><th class="p-4 text-center">Média ${activeData.prevYear}</th>`;
             currentYearMonths.forEach(m => { headHtml += `<th class="p-4 text-center">${m.label}</th>`; });
             headHtml += `<th class="p-4 text-center bg-emerald-50 text-emerald-800 border-l border-slate-200">Média ${activeData.currentYear} (YTD)</th></tr>`;
             document.getElementById('table-head').innerHTML = headHtml;
 
             let html = '';
             let totals = { timePrev: 0, countPrev: 0, currM: currentYearMonths.map(()=>({time:0, count:0})), timeCurr: 0, countCurr: 0 };
+            const maqKeys = Object.keys(activeData.maqNames).map(Number);
 
-            const maqKeys = Object.keys(activeData.maqNames);
-
-            maqKeys.forEach(maqStr => {
-                const maq = parseInt(maqStr);
+            maqKeys.forEach(maq => {
                 const trClass = (maqVal !== 'all' && parseInt(maqVal) !== maq) ? 'opacity-30' : '';
-                
                 const mPrev = filtered.filter(d => d.maqId === maq && d.ano === activeData.prevYear);
-                const stPrev = mPrev.reduce((s,c) => s+c.time, 0);
-                const scPrev = mPrev.reduce((s,c) => s+c.count, 0);
+                const stPrev = mPrev.reduce((s,c) => s+c.time, 0); const scPrev = mPrev.reduce((s,c) => s+c.count, 0);
                 totals.timePrev += stPrev; totals.countPrev += scPrev;
 
                 const mCurr = filtered.filter(d => d.maqId === maq && d.ano === activeData.currentYear);
-                const stCurr = mCurr.reduce((s,c) => s+c.time, 0);
-                const scCurr = mCurr.reduce((s,c) => s+c.count, 0);
+                const stCurr = mCurr.reduce((s,c) => s+c.time, 0); const scCurr = mCurr.reduce((s,c) => s+c.count, 0);
                 totals.timeCurr += stCurr; totals.countCurr += scCurr;
 
                 let rowHtml = `<tr class="hover:bg-slate-50 transition ${trClass}">
@@ -686,8 +700,7 @@
 
                 currentYearMonths.forEach((mObj, i) => {
                     const mm = filtered.filter(d => d.maqId === maq && d.monthIdx === mObj.idx);
-                    const stm = mm.reduce((s,c) => s+c.time, 0);
-                    const scm = mm.reduce((s,c) => s+c.count, 0);
+                    const stm = mm.reduce((s,c) => s+c.time, 0); const scm = mm.reduce((s,c) => s+c.count, 0);
                     totals.currM[i].time += stm; totals.currM[i].count += scm;
                     rowHtml += `<td class="p-4 text-center">${scm ? (stm/scm).toFixed(2) : '-'}</td>`;
                 });
@@ -698,26 +711,29 @@
 
             document.getElementById('table-body').innerHTML = html;
 
-            let fhtml = `<tr class="bg-slate-100 font-bold text-slate-900 border-t border-slate-200">
-                            <td class="p-4">Média Geral</td>
-                            <td class="p-4 text-center text-slate-700">${totals.countPrev ? (totals.timePrev/totals.countPrev).toFixed(2) : '-'}</td>`;
-            currentYearMonths.forEach((m, i) => {
-                fhtml += `<td class="p-4 text-center">${totals.currM[i].count ? (totals.currM[i].time/totals.currM[i].count).toFixed(2) : '-'}</td>`;
-            });
+            let fhtml = `<tr class="bg-slate-100 font-bold text-slate-900 border-t border-slate-200"><td class="p-4">Média Geral</td><td class="p-4 text-center text-slate-700">${totals.countPrev ? (totals.timePrev/totals.countPrev).toFixed(2) : '-'}</td>`;
+            currentYearMonths.forEach((m, i) => { fhtml += `<td class="p-4 text-center">${totals.currM[i].count ? (totals.currM[i].time/totals.currM[i].count).toFixed(2) : '-'}</td>`; });
             fhtml += `<td class="p-4 text-center bg-emerald-100 text-emerald-950 border-l border-slate-200">${totals.countCurr ? (totals.timeCurr/totals.countCurr).toFixed(2) : '-'}</td></tr>`;
             document.getElementById('table-foot').innerHTML = fhtml;
         }
 
-        // --- EXPORTAR PARA EXCEL ---
+        // --- EXPORTAR PARA EXCEL (AMBAS AS TABELAS) ---
         function exportToExcel() {
-            const table = document.getElementById('resumoTable');
-            const wb = XLSX.utils.table_to_book(table, {sheet: "Resumo de Setups"});
+            const wb = XLSX.utils.book_new();
+
+            const tableDetail = document.getElementById('detailTable');
+            const wsDetail = XLSX.utils.table_to_sheet(tableDetail);
+            XLSX.utils.book_append_sheet(wb, wsDetail, "Análise de Desempenho");
+
+            const tableResumo = document.getElementById('resumoTable');
+            const wsResumo = XLSX.utils.table_to_sheet(tableResumo);
+            XLSX.utils.book_append_sheet(wb, wsResumo, "Evolução YTD");
+            
             const today = new Date();
-            const dateStr = today.getFullYear() + "-" + 
-                            String(today.getMonth() + 1).padStart(2, '0') + "-" + 
-                            String(today.getDate()).padStart(2, '0');
-                            
-            XLSX.writeFile(wb, `Resumo_Setup_${dateStr}.xlsx`);
+            const dateStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0');
+            const groupName = activeData === dataSL ? "Slitters" : "Transversais";
+
+            XLSX.writeFile(wb, `Relatorio_Setup_${groupName}_${dateStr}.xlsx`);
         }
     </script>
 </body>
