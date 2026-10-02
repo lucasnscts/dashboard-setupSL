@@ -76,17 +76,27 @@
             <!-- Barra de Filtros -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4 no-print">
                 <div class="flex items-center gap-4 flex-wrap w-full">
+                    
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <label for="machineFilter" class="font-semibold text-sm text-slate-600"><i class="fa-solid fa-industry mr-1 text-blue-500"></i> Máquina:</label>
+                        <label for="machineFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-industry mr-1 text-blue-500"></i> Máquina:</label>
                         <select id="machineFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full sm:w-auto">
                             <!-- Gerado dinamicamente -->
                         </select>
                     </div>
 
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <label for="sintomaFilter" class="font-semibold text-sm text-slate-600"><i class="fa-solid fa-screwdriver-wrench mr-1 text-blue-500"></i> Sintoma:</label>
-                        <select id="sintomaFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full max-w-md">
+                        <label for="sintomaFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench mr-1 text-blue-500"></i> Sintoma:</label>
+                        <select id="sintomaFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full max-w-xs">
                             <!-- Gerado dinamicamente -->
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto ml-auto border-l border-slate-200 pl-4">
+                        <label for="yearFilter" class="font-semibold text-sm text-slate-600 flex items-center whitespace-nowrap"><i class="fa-solid fa-calendar-days mr-1 text-blue-500"></i> Período:</label>
+                        <select id="yearFilter" onchange="updateDashboard()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-full sm:w-auto">
+                            <option value="all">Todos os Anos</option>
+                            <option value="prev" id="opt-prev-year">Ano Anterior</option>
+                            <option value="curr" id="opt-curr-year">Ano Vigente</option>
                         </select>
                     </div>
                 </div>
@@ -136,7 +146,7 @@
                 </div>
             </div>
 
-            <!-- Gráficos Principais -->
+            <!-- Gráficos Principais (Não controlados pelo filtro de período) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Gráfico de Linha -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
@@ -166,9 +176,8 @@
                 </div>
             </div>
 
-            <!-- NOVOS GRÁFICOS: Volume e Tempo Total -->
+            <!-- NOVOS GRÁFICOS: Volume e Tempo Total (Controlados pelo filtro de período) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Gráfico de Volume Mensal -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-lg text-slate-800">Volume Total de Setups</h3>
@@ -178,7 +187,6 @@
                         <canvas id="volumeChart"></canvas>
                     </div>
                 </div>
-                <!-- NOVO: Gráfico de Tempo Total Mensal -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-lg text-slate-800">Tempo Total de Parada</h3>
@@ -251,7 +259,7 @@
             <!-- Tabela Resumo Anual -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-table mr-2 text-blue-500"></i> Resumo Anual e Evolução YTD (Minutos)</h3>
+                    <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-table mr-2 text-blue-500"></i> Resumo Anual e Evolução mensal</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table id="resumoTable" class="w-full text-left border-collapse text-sm whitespace-nowrap">
@@ -422,6 +430,9 @@
             document.getElementById('kpi-title-curr').innerText = `Tempo Médio (${activeData.currentYear})`;
             document.getElementById('kpi-vol-title-curr').innerText = `Total Setups (${activeData.currentYear})`;
 
+            document.getElementById('opt-prev-year').innerText = activeData.prevYear;
+            document.getElementById('opt-curr-year').innerText = activeData.currentYear;
+
             const maqSelect = document.getElementById('machineFilter');
             let maqHtml = `<option value="all">Todas as Máquinas</option>`;
             Object.keys(activeData.maqNames).forEach(id => { maqHtml += `<option value="${id}">${activeData.maqNames[id]}</option>`; });
@@ -431,6 +442,9 @@
             let sinHtml = `<option value="all">Todos os Sintomas</option>`;
             activeData.sortedSymptoms.forEach(sin => { sinHtml += `<option value="${sin}">${sin}</option>`; });
             sinSelect.innerHTML = sinHtml;
+
+            // Reinicia dropdown de ano para "all" ao trocar de aba
+            document.getElementById('yearFilter').value = 'all';
 
             initCharts(); 
             updateDashboard(); 
@@ -515,10 +529,19 @@
         function updateDashboard() {
             const maqVal = document.getElementById('machineFilter').value;
             const sinVal = document.getElementById('sintomaFilter').value;
+            const yearVal = document.getElementById('yearFilter').value;
 
             const filtered = activeData.rawData.filter(d => 
                 (maqVal === 'all' || d.maqId == maqVal) && (sinVal === 'all' || d.sintoma === sinVal)
             );
+
+            // Filtragem de meses com base no filtro de ano
+            let chartMonths = activeData.months;
+            if (yearVal === 'prev') {
+                chartMonths = activeData.months.filter(m => m.endsWith(String(activeData.prevYear).slice(2)));
+            } else if (yearVal === 'curr') {
+                chartMonths = activeData.months.filter(m => m.endsWith(String(activeData.currentYear).slice(2)));
+            }
 
             const monthsPrevYear = activeData.months.filter(m => m.endsWith(String(activeData.prevYear).slice(2))).length || 1;
             const monthsCurrYear = activeData.months.filter(m => m.endsWith(String(activeData.currentYear).slice(2))).length || 1;
@@ -592,23 +615,39 @@
             if (maxVolume && maxVolume.volCurr > 0) { document.getElementById('highlight-volume').innerHTML = `A <strong>${maxVolume.name}</strong> mantém o maior volume (${maxVolume.volCurr} setups em ${activeData.currentYear}) e um tempo médio de ciclo de ~${maxVolume.avgCurr.toFixed(2)} min.`; } 
             else { document.getElementById('highlight-volume').innerHTML = `Ainda sem eventos registados no ano corrente.`; }
 
+            // Atualização dos Gráficos
             const lineData = maqKeys.map(()=>[]);
             const volData = maqKeys.map(()=>[]);
             const timeData = maqKeys.map(()=>[]);
 
+            // LineChart usa sempre todos os meses para não perder o histórico
             maqKeys.forEach((maq, index) => {
                 activeData.months.forEach((_, mIdx) => {
                     const mm = filtered.filter(d => d.maqId === maq && d.monthIdx === mIdx);
                     const stm = mm.reduce((s,c) => s+c.time, 0);
                     const scm = mm.reduce((s,c) => s+c.count, 0);
                     lineData[index].push(scm ? (stm/scm).toFixed(2) : null);
+                });
+            });
+
+            // Volume e TimeCharts respeitam o filtro de ano
+            maqKeys.forEach((maq, index) => {
+                chartMonths.forEach(monthLabel => {
+                    const mIdx = activeData.months.indexOf(monthLabel);
+                    const mm = filtered.filter(d => d.maqId === maq && d.monthIdx === mIdx);
+                    const stm = mm.reduce((s,c) => s+c.time, 0);
+                    const scm = mm.reduce((s,c) => s+c.count, 0);
                     volData[index].push(scm);
                     timeData[index].push(stm > 0 ? Math.round(stm) : null);
                 });
             });
 
             lineChart.data.datasets.forEach((ds, i) => { ds.data = lineData[i]; ds.hidden = (maqVal !== 'all' && parseInt(maqVal) !== maqKeys[i]); }); lineChart.update();
+            
+            volumeChart.data.labels = chartMonths;
             volumeChart.data.datasets.forEach((ds, i) => { ds.data = volData[i]; ds.hidden = (maqVal !== 'all' && parseInt(maqVal) !== maqKeys[i]); }); volumeChart.update();
+            
+            timeChart.data.labels = chartMonths;
             timeChart.data.datasets.forEach((ds, i) => { ds.data = timeData[i]; ds.hidden = (maqVal !== 'all' && parseInt(maqVal) !== maqKeys[i]); }); timeChart.update();
 
             barChart.data.datasets[0].data = machineStats.map(m => m.avgPrev > 0 ? m.avgPrev.toFixed(2) : 0);
@@ -616,10 +655,10 @@
             barChart.update();
 
             updateTable(filtered, maqVal);
-            updateDetailTable(filtered, maqVal);
+            updateDetailTable(filtered, maqVal, chartMonths);
         }
 
-        function updateDetailTable(filtered, maqVal) {
+        function updateDetailTable(filtered, maqVal, chartMonths) {
             const tbody = document.getElementById('detail-table-body');
             let html = '';
             const maqKeys = Object.keys(activeData.maqNames).map(Number);
@@ -632,7 +671,8 @@
                 const scCurr = mCurr.reduce((s,c) => s+c.count, 0);
                 const targetAvg = scCurr ? (stCurr / scCurr) : 0;
                 
-                activeData.months.forEach((monthLabel, mIdx) => {
+                chartMonths.forEach(monthLabel => {
+                    const mIdx = activeData.months.indexOf(monthLabel);
                     const mm = filtered.filter(d => d.maqId === maq && d.monthIdx === mIdx);
                     const count = mm.reduce((s,c) => s+c.count, 0);
                     if(count === 0) return; 
@@ -694,15 +734,25 @@
                 const stCurr = mCurr.reduce((s,c) => s+c.time, 0); const scCurr = mCurr.reduce((s,c) => s+c.count, 0);
                 totals.timeCurr += stCurr; totals.countCurr += scCurr;
 
+                const avgP = scPrev ? (stPrev / scPrev) : 0;
+
                 let rowHtml = `<tr class="hover:bg-slate-50 transition ${trClass}">
                                 <td class="p-4 font-semibold text-slate-800">${activeData.maqNames[maq]}</td>
-                                <td class="p-4 text-center font-bold text-slate-600 bg-slate-50/50">${scPrev ? (stPrev/scPrev).toFixed(2) : '-'}</td>`;
+                                <td class="p-4 text-center font-bold text-slate-600 bg-slate-50/50">${avgP > 0 ? avgP.toFixed(2) : '-'}</td>`;
 
                 currentYearMonths.forEach((mObj, i) => {
                     const mm = filtered.filter(d => d.maqId === maq && d.monthIdx === mObj.idx);
                     const stm = mm.reduce((s,c) => s+c.time, 0); const scm = mm.reduce((s,c) => s+c.count, 0);
                     totals.currM[i].time += stm; totals.currM[i].count += scm;
-                    rowHtml += `<td class="p-4 text-center">${scm ? (stm/scm).toFixed(2) : '-'}</td>`;
+                    
+                    // Formatação Condicional (Verde se < avgP, Vermelho se > avgP)
+                    let colorClass = 'text-slate-800';
+                    if (scm && avgP > 0) {
+                        const monthAvg = stm / scm;
+                        if (monthAvg > avgP) colorClass = 'text-red-600 font-bold';
+                        else if (monthAvg < avgP) colorClass = 'text-emerald-600 font-bold';
+                    }
+                    rowHtml += `<td class="p-4 text-center ${colorClass}">${scm ? (stm/scm).toFixed(2) : '-'}</td>`;
                 });
 
                 rowHtml += `<td class="p-4 text-center font-bold bg-emerald-50/50 text-emerald-900 border-l border-slate-200">${scCurr ? (stCurr/scCurr).toFixed(2) : '-'}</td></tr>`;
@@ -712,7 +762,18 @@
             document.getElementById('table-body').innerHTML = html;
 
             let fhtml = `<tr class="bg-slate-100 font-bold text-slate-900 border-t border-slate-200"><td class="p-4">Média Geral</td><td class="p-4 text-center text-slate-700">${totals.countPrev ? (totals.timePrev/totals.countPrev).toFixed(2) : '-'}</td>`;
-            currentYearMonths.forEach((m, i) => { fhtml += `<td class="p-4 text-center">${totals.currM[i].count ? (totals.currM[i].time/totals.currM[i].count).toFixed(2) : '-'}</td>`; });
+            
+            const avgOverallPrev = totals.countPrev ? (totals.timePrev/totals.countPrev) : 0;
+            
+            currentYearMonths.forEach((m, i) => { 
+                let footerColor = 'text-slate-700';
+                if (totals.currM[i].count && avgOverallPrev > 0) {
+                    const fMonthAvg = totals.currM[i].time / totals.currM[i].count;
+                    if (fMonthAvg > avgOverallPrev) footerColor = 'text-red-600';
+                    else if (fMonthAvg < avgOverallPrev) footerColor = 'text-emerald-600';
+                }
+                fhtml += `<td class="p-4 text-center ${footerColor}">${totals.currM[i].count ? (totals.currM[i].time/totals.currM[i].count).toFixed(2) : '-'}</td>`; 
+            });
             fhtml += `<td class="p-4 text-center bg-emerald-100 text-emerald-950 border-l border-slate-200">${totals.countCurr ? (totals.timeCurr/totals.countCurr).toFixed(2) : '-'}</td></tr>`;
             document.getElementById('table-foot').innerHTML = fhtml;
         }
